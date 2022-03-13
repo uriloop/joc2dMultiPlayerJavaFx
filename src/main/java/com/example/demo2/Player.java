@@ -31,6 +31,7 @@ public class Player {
         this.posY = posY;
         this.posX = posX;
         this.direccio = direccio;
+        this.id=id;
     }
 
     public void setId(int id) {

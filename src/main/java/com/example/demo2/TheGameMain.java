@@ -38,13 +38,14 @@ public class TheGameMain extends Application {
     private Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
         root.getChildren().add(player1);
-        enemics.forEach(e-> root.getChildren().add(e));
 
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
                 update();
+                enemics.forEach(e -> root.getChildren().add(e));
+
             }
         };
         timer.start();
@@ -146,8 +147,6 @@ public class TheGameMain extends Application {
             }
 
 
-
-
 /*
 
                 if (cicles - ciclesDispar > 150) {
@@ -187,6 +186,7 @@ public class TheGameMain extends Application {
                 .filter(s -> s.getType().equals("atac"))
                 .filter(s -> s.getDireccio() == Player.Direccio.E)
                 .forEach(Sprite::moveRight);
+
 
 
         // Aixó per que morin els players
@@ -230,29 +230,32 @@ public class TheGameMain extends Application {
 
         // mirar el joc i per cada enemic, és a dir tots menys el meu player
 
-        if (client==null){
-            client= new Client("localhost",5555,this);
+        if (client == null) {
+            client = new Client("localhost", 5555, this);
             client.start();
         }
         // akí posem el ready.
 
-        if (client.isReady()){
-            this.id=client.getIdPlayer();
-            enemics=new ArrayList<>();
-            client.getJoc().getPlayers().forEach( p-> {
-            if (p.getId()!=client.getIdPlayer()){
-                // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int)p.getPosX(), (int)p.getPosY(), 60, 90, p.getDireccio(), 25));
+        if (client.isReady()) {
+            this.id = client.getIdPlayer();
+            enemics = new ArrayList<>();
+            client.getJoc().getPlayers().forEach(p -> {
+                if (p.getId() != id) {
+                    // actualitzem tots els players menys el nostre   // de moment els tornem a crear
+                    enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
 
-            }else {
+                } else {
              /*   // akí el nostre
                 p.setDireccio(player1.getDireccio());
                 p.setPosX((int)player1.getTranslateX());
                 p.setPosY((int)player1.getTranslateY());*/
-            }
+                }
+
 
 
             });
+
+
 
         }
 

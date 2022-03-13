@@ -92,13 +92,28 @@ public class ServidorThread extends Thread {
         JsonClass json = new JsonClass();
         Joc jocRebut = json.getObject(msgEntrant);
         // actualitzem el jugador que ens envia
-        estatJoc=jocRebut;
-      /*  Player plAModificar= estatJoc.getPlayers().stream().filter(player -> player.getId()==idPropia).toList().get(0);
+       /* Player plAModificar= estatJoc.getPlayers().stream().filter(player -> player.getId()==idPropia).toList().get(0);
         Player plQueArriba= jocRebut.getPlayers().stream().filter(player -> player.getId()!=idPropia).toList().get(0);
 
         plAModificar.setDireccio(plQueArriba.getDireccio());
         plAModificar.setPosX(plQueArriba.getPosX());
         plAModificar.setPosY(plQueArriba.getPosY());*/
+
+        estatJoc.getPlayers().forEach(player -> {
+            if (player.getId() == idPropia) {
+                for (Player p:
+                     jocRebut.getPlayers()) {
+                    if (p.getId()==idPropia){
+                        player.setPosX(p.getPosX());
+                        player.setPosY(p.getPosY());
+                        player.setDireccio(p.getDireccio());
+                        player.setId(p.getId());
+
+                    }
+                }
+
+            }
+        });
 
         String resposta = json.getJSON(estatJoc);
 

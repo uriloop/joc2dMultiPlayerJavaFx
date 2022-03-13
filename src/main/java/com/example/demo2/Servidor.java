@@ -12,7 +12,7 @@ public class Servidor {
 
 
     int maxPlayers = 4;
-    private Joc estatJoc;
+    private final Joc estatJoc;
     private List<Player> players;
     int port;
     // un map per tenir els players en una llista numerada
