@@ -38,6 +38,7 @@ public class TheGameMain extends Application {
     private Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
         root.getChildren().add(player1);
+        enemics.forEach(e-> root.getChildren().add(e));
 
 
         AnimationTimer timer = new AnimationTimer() {
@@ -221,35 +222,36 @@ public class TheGameMain extends Application {
         cicles++;
     }
 
+    public Sprite getPlayer1() {
+        return player1;
+    }
 
     private void updateEstatJoc() {
 
         // mirar el joc i per cada enemic, és a dir tots menys el meu player
 
         if (client==null){
-            client= new Client("localhost",5555);
+            client= new Client("localhost",5555,this);
             client.start();
         }
         // akí posem el ready.
 
         if (client.isReady()){
-
-            enemics.removeAll(enemics);
+            this.id=client.getIdPlayer();
+            enemics=new ArrayList<>();
             client.getJoc().getPlayers().forEach( p-> {
             if (p.getId()!=client.getIdPlayer()){
                 // actualitzem tots els players menys el nostre   // de moment els tornem a crear
                 enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int)p.getPosX(), (int)p.getPosY(), 60, 90, p.getDireccio(), 25));
 
             }else {
-                // akí el nostre
+             /*   // akí el nostre
                 p.setDireccio(player1.getDireccio());
                 p.setPosX((int)player1.getTranslateX());
-                p.setPosY((int)player1.getTranslateY());
+                p.setPosY((int)player1.getTranslateY());*/
             }
 
-            enemics.forEach(e->{
-                root.getChildren().add(e);
-            });
+
             });
 
         }

@@ -25,19 +25,21 @@ public class Client extends Thread {
 
     private int idPlayer;
     private boolean ready;
+    TheGameMain gameMain;
 
 
-    public Client(String hostname, int port) {
+    public Client(String hostname, int port, TheGameMain gameMain) {
         this.hostname = hostname;
         this.port = port;
         continueConnected = true;
-        List<Player> playersJoc=new ArrayList<>();
-        List<Player> playersCoj= new ArrayList<>();
+        List<Player> playersJoc = new ArrayList<>();
+        List<Player> playersCoj = new ArrayList<>();
 
-        joc = new Joc( playersJoc);
+        this.gameMain = gameMain;
+        joc = new Joc(playersJoc);
         coj = new Joc(playersCoj);
 
-        json=new JsonClass();
+        json = new JsonClass();
     }
 
 
@@ -62,6 +64,8 @@ public class Client extends Thread {
             // ~enviem el nick~  enviem resposta simple de moment
             // TODO enviar el nick que hauriem d'haver demanat
             request = "Conectat!";
+            ready = true;
+
             out.println(request);
             out.flush();
             System.out.println("o. " + request);
@@ -71,9 +75,9 @@ public class Client extends Thread {
             serverData = in.readLine();
             System.out.println("i. " + serverData);
 
-            joc=json.getObject(serverData);
+            joc = json.getObject(serverData);
 
-            ready=true;
+            ready = true;
             // comença la festa dels Json
             out.println(json.getJSON(joc));
             out.flush();
@@ -106,9 +110,29 @@ public class Client extends Thread {
 
         JsonClass json = new JsonClass();
         // ens pillem tota la info.            després només actualitzarem als altres players en el joc. pero abans de retornar el json hem d'actualitzar el player
-        joc=json.getObject(recivedDataFromServer);
+        joc = json.getObject(recivedDataFromServer);
         //joc.actualitzaClient(idPlayer, recivedDataFromServer);
+
+        try {
+            joc.getPlayers().stream().filter(p -> p.getId() == idPlayer).toList().get(0).setPosY((int) (gameMain.getPlayer1().getTranslateY()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            joc.getPlayers().stream().filter(p -> p.getId() == idPlayer).toList().get(0).setPosX((int) (gameMain.getPlayer1().getTranslateX()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            joc.getPlayers().stream().filter(p -> p.getId() == idPlayer).toList().get(0).setDireccio((gameMain.getPlayer1().getDireccio()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String resposta = json.getJSON(joc);
+
+
         // monitoritzar el que rebem del servidor
         System.out.println("i.  " + recivedDataFromServer);
 

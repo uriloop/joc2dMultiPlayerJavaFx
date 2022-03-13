@@ -19,7 +19,7 @@ public class Servidor {
     private List<ServidorThread> playersConectats;
     private List<Thread> clients;
     private int numplayersConectats;
-    private int ids;
+    private int ids=0;
 
     public Servidor(int port) {
         this.port = port;
@@ -29,7 +29,6 @@ public class Servidor {
         // inicio les variables de l'estat del joc
         players= new ArrayList<>();
         numplayersConectats=0;
-        ids=0;
         estatJoc = new Joc(players);
     }
 
@@ -68,10 +67,11 @@ public class Servidor {
                     //Llançar Thread per establir la comunicació
 
                     playersConectats.add(new ServidorThread(clientSocket, estatJoc,ids));
-                    ids++;
                     clients.add(new Thread(playersConectats.get(numplayersConectats)));
                     clients.get(numplayersConectats).start();
                     numplayersConectats++;
+                    ids++;
+
                 }
 
             }

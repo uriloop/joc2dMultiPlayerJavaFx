@@ -6,13 +6,13 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
-public class ServidorThread implements Runnable {
+public class ServidorThread extends Thread {
 
 // com comunico el serverThread amb el server per compartir les dades dels players???????
     // Que arranca que???? el servidor va apart, només escolta.
     /*   El servidor arranca el client i el client arranca el game     ?????           */
 
-JsonClass json;
+    JsonClass json;
     Socket clientSocket = null;
     BufferedReader in = null;
     PrintStream out = null;
@@ -34,7 +34,7 @@ JsonClass json;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        json= new JsonClass();
+        json = new JsonClass();
 
     }
 
@@ -43,6 +43,7 @@ JsonClass json;
         System.out.println("i. jug_" + (idPropia) + " Conexió establerta");
         try {
             // primer missatge on li passem el num de player per determinar la posició inicial i el color del usuari
+            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f + (idPropia * 100), Player.Direccio.S));
             msgSortint = String.valueOf(idPropia);
             out.println(msgSortint);
             out.flush();
@@ -51,20 +52,19 @@ JsonClass json;
             // enviem el primer json amb tots els players, l'usuari ja sap la seva id així que ja podrà discernir que ha de actualitzar i que no.
             msgEntrant = in.readLine();
             System.out.println("i. jug_" + (idPropia) + ": " + msgEntrant);
-            if (msgEntrant.equals("Conectat!")){
+            if (msgEntrant.equals("Conectat!")) {
                 // akí podriem rebre el nick del jugador per a que tots veiessin el nom dels altres ara tiro milles
                 // TODO posar nick al client per a que el servidor tingui el nom dels clients i poder-los mostrar en un futur
             }
-            estatJoc.getPlayers().add(new Player(idPropia,100f,100f+(idPropia*80), Player.Direccio.S));
 
-            msgSortint= json.getJSON(estatJoc);
+            msgSortint = json.getJSON(estatJoc);
             out.println(msgSortint);
             out.flush();
 
 
             // Akí hem de rebre el primer json del client
 
-            msgEntrant=in.readLine();
+            msgEntrant = in.readLine();
 
             // akí comença la festa dels json
             while (!acabat) {
@@ -90,7 +90,16 @@ JsonClass json;
     private String generarResposta(String msgEntrant) {
 
         JsonClass json = new JsonClass();
-        estatJoc.actualitzaServidor(idPropia, msgEntrant);
+        Joc jocRebut = json.getObject(msgEntrant);
+        // actualitzem el jugador que ens envia
+        estatJoc=jocRebut;
+      /*  Player plAModificar= estatJoc.getPlayers().stream().filter(player -> player.getId()==idPropia).toList().get(0);
+        Player plQueArriba= jocRebut.getPlayers().stream().filter(player -> player.getId()!=idPropia).toList().get(0);
+
+        plAModificar.setDireccio(plQueArriba.getDireccio());
+        plAModificar.setPosX(plQueArriba.getPosX());
+        plAModificar.setPosY(plQueArriba.getPosY());*/
+
         String resposta = json.getJSON(estatJoc);
 
         // per monitoritzar el que passa al servidor
