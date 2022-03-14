@@ -101,9 +101,9 @@ public class ServidorThread extends Thread {
 
         estatJoc.getPlayers().forEach(player -> {
             if (player.getId() == idPropia) {
-                for (Player p:
-                     jocRebut.getPlayers()) {
-                    if (p.getId()==idPropia){
+                for (Player p :
+                        jocRebut.getPlayers()) {
+                    if (p.getId() == idPropia) {
                         player.setPosX(p.getPosX());
                         player.setPosY(p.getPosY());
                         player.setDireccio(p.getDireccio());
@@ -115,6 +115,32 @@ public class ServidorThread extends Thread {
             }
         });
 
+        boolean existeix = false;
+        // Per cada bala rebuda
+        for (Bala bReb : jocRebut.getBales()) {
+            // per cada bala que existeix acyualment
+            for (Bala bAct :
+                    estatJoc.getBales()) {
+                // comprovem si existeix per determinar si s'ha de crear o no
+                if (bAct.getIdBala() == bReb.getIdBala()) {
+                    existeix = true;
+                }
+            }
+            // si no existeix la creem, sino l'actualitzem la posició i dir
+            if (!existeix) estatJoc.getBales().add(bReb);
+            else {
+                estatJoc.getBales().forEach(b -> {
+                    // busquem la bala corresponent i l'actualitzem
+                    if (b.getIdBala() == bReb.getIdBala()) {
+                        b.setDir(bReb.getDir());
+                        b.setPosX(bReb.getPosX());
+                        b.setPosY(bReb.getPosY());
+
+                    }
+                });
+            }
+            existeix = false;
+        }
         String resposta = json.getJSON(estatJoc);
 
         // per monitoritzar el que passa al servidor

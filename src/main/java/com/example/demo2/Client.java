@@ -118,6 +118,8 @@ public class Client extends Thread {
         joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosX((int)(gameMain.getPlayer1().getTranslateX()));
         joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setDireccio((gameMain.getPlayer1().getDireccio()));
 
+
+
         String resposta = json.getJSON(joc);
 
 
