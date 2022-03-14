@@ -30,6 +30,7 @@ public class TheGameMain extends Application {
     private boolean carrega;
     private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN, 100, 100, 60, 90, Player.Direccio.S, 25);
     private List<Sprite> enemics = new ArrayList<>();
+    private List<Sprite> bales = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
     private int id;
@@ -46,6 +47,8 @@ public class TheGameMain extends Application {
             public void handle(long l) {
                 update();
                 enemics.forEach(e -> root.getChildren().add(e));
+                bales.forEach(b -> root.getChildren().add(b));
+
 
             }
         };
@@ -77,8 +80,10 @@ public class TheGameMain extends Application {
             }
             if (s.equals("A") || s.equals("LEFT")) {
                 player1.setDireccio(Player.Direccio.W);
-                if (player1.getTranslateX() - margeJugadors > 0)
+                client.getJoc().getPlayers().get(0).setDireccio(Player.Direccio.W);
+                if (player1.getTranslateX() - margeJugadors > 0){
                     dir.add("-Esquerre");
+                }
 
             }
             if (s.equals("W") || s.equals("UP")) {
@@ -137,6 +142,11 @@ public class TheGameMain extends Application {
                     break;
             }
 
+            // actualitzem el joc amb la nova posició i direcció del jugador  de moment estic suposant que el primer jugador és el nostre ... no ho he comprovat encara
+            client.getJoc().getPlayers().get(0).setPosX((int)(player1.getTranslateX()));
+            client.getJoc().getPlayers().get(0).setPosY((int)(player1.getTranslateY()));
+            client.getJoc().getPlayers().get(0).setDireccio((player1.getDireccio()));
+
             dir = new ArrayList<>();
             if (s.equals("COMMA")) {
                 if (cicles - ciclesDispar > 150) {
@@ -170,6 +180,8 @@ public class TheGameMain extends Application {
         });
 
         ciclesMov = cicles;
+
+        // reinicio els inputs
         input = new ArrayList<>();
 
 
@@ -230,24 +242,27 @@ public class TheGameMain extends Application {
 
     private void updateEstatJoc() {
 
-        // mirar el joc i per cada enemic, és a dir tots menys el meu player
 
+        // actualitzar posició i direcció del player
         if (client == null) {
             client = new Client("localhost", 5555, this);
             client.start();
         }
-        // akí posem el ready.
 
+        // akí posem el ready
         if (client.isReady()) {
             this.id = client.getIdPlayer();
-            idBales=id;
+            // les bales de cda jugador acaben en el numero de la seva id. per evitar conflictes en quan es conecta i rep la id
+            if (idBales%10!=id) idBales+=id;
+
             sprites().forEach(sprite -> {
                 if (sprite.getType().equals("enemic")) {
                     root.getChildren().remove(sprite);
                 }
             });
-
             enemics = new ArrayList<>();
+
+
             client.getJoc().getPlayers().forEach(p -> {
                 if (p.getId() != id) {
                     // actualitzem tots els players menys el nostre   // de moment els tornem a crear
@@ -268,8 +283,11 @@ public class TheGameMain extends Application {
                             (int) (b.getPosY() + atacH + altura),
                             atacW, atacH, b.getDir()));
                 }
-
-
+                for (Sprite sprite : sprites()) {
+                    if(sprite.getType().equals("atac")){
+                        root.getChildren().add(sprite);
+                    }
+                }
             });
 
 

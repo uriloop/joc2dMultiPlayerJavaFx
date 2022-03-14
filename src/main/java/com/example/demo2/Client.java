@@ -108,17 +108,68 @@ public class Client extends Thread {
 
     public String getRequest(String recivedDataFromServer) {
 
-        JsonClass json = new JsonClass();
+        Joc jocRebut= json.getObject(recivedDataFromServer);
         // ens pillem tota la info.            després només actualitzarem als altres players en el joc. pero abans de retornar el json hem d'actualitzar el player
-        joc=json.getObject(recivedDataFromServer);
-        //joc.actualitzaClient(idPlayer, recivedDataFromServer);
-
-       // try{}catch(Exception e){e.printStackTrace();}
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosY((int)(gameMain.getPlayer1().getTranslateY()));
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosX((int)(gameMain.getPlayer1().getTranslateX()));
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setDireccio((gameMain.getPlayer1().getDireccio()));
+// bales que arriben noves, players que arriben
 
 
+        // busquem bales que ens arriben noves i guardem les posicions
+        List<Integer> idsBalesServer= new ArrayList<>();
+        boolean esta=false;
+
+        for (int i = 0; i < jocRebut.getBales().size(); i++) {
+            for (Bala b :
+                    joc.getBales()) {
+                if (jocRebut.getBales().get(i).getIdBala()==b.getIdBala()) esta= true;
+            }
+            if  (!esta){
+                idsBalesServer.add(i);
+            }
+            esta=false;
+        }
+
+
+        // les afegim al joc
+        for (int i = 0; i < idsBalesServer.size(); i++) {
+            joc.getBales().add(jocRebut.getBales().get(i));
+        }
+
+        // mirem si hi ha players nous i els afegim a la llista provisinal
+        List<Player> playersRebutsNous= new ArrayList<>();
+
+        for (int i = 0; i < jocRebut.getPlayers().size(); i++) {
+            for (Player p :
+                    joc.getPlayers()) {
+                if (jocRebut.getPlayers().get(i).getId()==p.getId()) esta=true;
+            }
+            if(!esta) playersRebutsNous.add(jocRebut.getPlayers().get(i));
+            esta=false;
+        }
+        // els afegim al joc
+        for (int i = 0; i < playersRebutsNous.size(); i++) {
+            joc.getPlayers().add(playersRebutsNous.get(i));
+        }
+
+        // Actualitzem posició dels players que no són el propi usuari
+
+        for (Player p1:
+             joc.getPlayers()) {
+            for (Player p2:
+                 jocRebut.getPlayers()) {
+                if (p1.getId()!=idPlayer){  // si no és el usuari
+                    if (p1.getId()==p2.getId()){   // si és la id que toca
+                        p1.setDireccio(p2.getDireccio());
+                        p1.setPosX(p2.getPosX());
+                        p1.setPosY(p2.getPosY());
+                    }
+                }
+            }
+        }
+
+
+
+        // El jugador s'actualitza sol, és a dir l'actualitza el theGameMain
+        // Les bales només s'actualitzen un cop ja que només volem la posició y direcció del seu moment inicial
 
         String resposta = json.getJSON(joc);
 
