@@ -8,14 +8,24 @@ public class Sprite extends Rectangle {
 
     private int velMoviment= 2;
     int altura=20;
+    int id;
 
-    public Sprite(String type, Color color, int x, int y, int w, int h) {
+    public Sprite(int id,String type, Color color, int x, int y, int w, int h) {
         super(w,h,color);
         // per carregar els missatges
         this.type=type;
         setTranslateX(x);
         setTranslateY(y);
+        this.id=id;
 
+    }
+
+    public int getIdSprite() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setDead(boolean dead) {
@@ -39,7 +49,16 @@ public class Sprite extends Rectangle {
     }
 
     // Constructor per especificar la velocitat de moviment
-public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+    public Sprite(int id,String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+        super(w, h, color);
+        this.direccio = direccio;
+        this.type = type;
+        this.velMoviment=velocitat;
+        setTranslateX(x);
+        setTranslateY(y);
+        this.id=id;
+    }
+    public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
         this.direccio = direccio;
         this.type = type;

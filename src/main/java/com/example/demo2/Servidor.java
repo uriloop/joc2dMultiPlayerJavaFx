@@ -11,7 +11,7 @@ import java.util.List;
 public class Servidor {
 
 
-    int maxPlayers = 4;
+    int maxPlayers = 9;
     private final Joc estatJoc;
     private List<Player> players;
     int port;

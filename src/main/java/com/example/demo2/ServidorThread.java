@@ -43,7 +43,7 @@ public class ServidorThread extends Thread {
         System.out.println("i. jug_" + (idPropia) + " Conexió establerta");
         try {
             // primer missatge on li passem el num de player per determinar la posició inicial i el color del usuari
-            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f + (idPropia * 100), Player.Direccio.S));
+            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f , Player.Direccio.S));
             msgSortint = String.valueOf(idPropia);
             out.println(msgSortint);
             out.flush();

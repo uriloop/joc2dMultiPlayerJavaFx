@@ -50,6 +50,7 @@ public class Player {
     public void setDireccio(Direccio direccio) {
         this.direccio = direccio;
     }
+
     public enum Direccio {
         N, S, E, W;
 

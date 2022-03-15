@@ -45,8 +45,8 @@ public class TheGameMain extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                update();
                 enemics.forEach(e -> root.getChildren().add(e));
+                update();
                 bales.forEach(b -> root.getChildren().add(b));
 
 
@@ -80,8 +80,7 @@ public class TheGameMain extends Application {
             }
             if (s.equals("A") || s.equals("LEFT")) {
                 player1.setDireccio(Player.Direccio.W);
-                client.getJoc().getPlayers().get(0).setDireccio(Player.Direccio.W);
-                if (player1.getTranslateX() - margeJugadors > 0){
+                if (player1.getTranslateX() - margeJugadors > 0) {
                     dir.add("-Esquerre");
                 }
 
@@ -143,8 +142,8 @@ public class TheGameMain extends Application {
             }
 
             // actualitzem el joc amb la nova posició i direcció del jugador  de moment estic suposant que el primer jugador és el nostre ... no ho he comprovat encara
-            client.getJoc().getPlayers().get(0).setPosX((int)(player1.getTranslateX()));
-            client.getJoc().getPlayers().get(0).setPosY((int)(player1.getTranslateY()));
+            client.getJoc().getPlayers().get(0).setPosX((int) (player1.getTranslateX()));
+            client.getJoc().getPlayers().get(0).setPosY((int) (player1.getTranslateY()));
             client.getJoc().getPlayers().get(0).setDireccio((player1.getDireccio()));
 
             dir = new ArrayList<>();
@@ -153,8 +152,8 @@ public class TheGameMain extends Application {
                     ciclesDispar = cicles;
                     Sprite sp = player1.atacar(player1);
                     root.getChildren().add(sp);
-                    client.getJoc().getBales().add(new Bala(idBales,(float) player1.getTranslateX(), (float) player1.getTranslateY(), player1.getDireccio()));
-                    idBales+=10;
+                    client.getJoc().getBales().add(new Bala(idBales, (float) player1.getTranslateX(), (float) player1.getTranslateY(), player1.getDireccio()));
+                    idBales += 10;
                 }
 
             }
@@ -243,7 +242,6 @@ public class TheGameMain extends Application {
     private void updateEstatJoc() {
 
 
-        // actualitzar posició i direcció del player
         if (client == null) {
             client = new Client("localhost", 5555, this);
             client.start();
@@ -252,43 +250,35 @@ public class TheGameMain extends Application {
         // akí posem el ready
         if (client.isReady()) {
             this.id = client.getIdPlayer();
+            player1.setId(id);
             // les bales de cda jugador acaben en el numero de la seva id. per evitar conflictes en quan es conecta i rep la id
-            if (idBales%10!=id) idBales+=id;
+            if (idBales % 10 != id) idBales += id;
 
-            sprites().forEach(sprite -> {
-                if (sprite.getType().equals("enemic")) {
-                    root.getChildren().remove(sprite);
+            enemics.removeAll(enemics);
+
+            // dibuixem els players enemics
+            for (int i = 0; i < client.getJoc().getPlayers().size(); i++) {
+                if (client.getJoc().getPlayers().get(i).getId() != id) {
+                        enemics.add(new Sprite(client.getJoc().getPlayers().get(i).getId(), "enemic", Color.RED, (int) (client.getJoc().getPlayers().get(i).getPosX()), (int) client.getJoc().getPlayers().get(i).getPosY(), 60, 90, client.getJoc().getPlayers().get(i).getDireccio(), 25));
+
                 }
+            }
+
+            enemics.forEach(e-> {
+                sprites().add(e);
             });
-            enemics = new ArrayList<>();
 
 
-            client.getJoc().getPlayers().forEach(p -> {
-                if (p.getId() != id) {
-                    // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                    enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
 
-                } else {
-             /*   // akí el nostre
-                p.setDireccio(player1.getDireccio());
-                p.setPosX((int)player1.getTranslateX());
-                p.setPosY((int)player1.getTranslateY());*/
-                }
-                int atacW = 16;
-                int atacH = 8;
-                int altura = 20;
-                for (Bala b :
-                        client.getJoc().getBales()) {
-                    sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
-                            (int) (b.getPosY() + atacH + altura),
-                            atacW, atacH, b.getDir()));
-                }
-                for (Sprite sprite : sprites()) {
-                    if(sprite.getType().equals("atac")){
-                        root.getChildren().add(sprite);
-                    }
-                }
-            });
+            int atacW = 16;
+            int atacH = 8;
+            int altura = 20;
+            for (Bala b :
+                    client.getJoc().getBales()) {
+                sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
+                        (int) (b.getPosY() + atacH + altura),
+                        atacW, atacH, b.getDir()));
+            }
 
 
         }
