@@ -28,18 +28,18 @@ public class Client extends Thread {
     TheGameMain gameMain;
 
 
-    public Client(String hostname, int port,TheGameMain gameMain) {
+    public Client(String hostname, int port, TheGameMain gameMain) {
         this.hostname = hostname;
         this.port = port;
         continueConnected = true;
-        List<Player> playersJoc=new ArrayList<>();
-        List<Player> playersCoj= new ArrayList<>();
+        List<Player> playersJoc = new ArrayList<>();
+        List<Player> playersCoj = new ArrayList<>();
 
-        this.gameMain=gameMain;
-        joc = new Joc( playersJoc);
+        this.gameMain = gameMain;
+        joc = new Joc(playersJoc);
         coj = new Joc(playersCoj);
 
-        json=new JsonClass();
+        json = new JsonClass();
     }
 
 
@@ -64,7 +64,7 @@ public class Client extends Thread {
             // ~enviem el nick~  enviem resposta simple de moment
             // TODO enviar el nick que hauriem d'haver demanat
             request = "Conectat!";
-            ready=true;
+            ready = true;
 
             out.println(request);
             out.flush();
@@ -75,9 +75,9 @@ public class Client extends Thread {
             serverData = in.readLine();
             System.out.println("i. " + serverData);
 
-            joc=json.getObject(serverData);
+            joc = json.getObject(serverData);
 
-            ready=true;
+            ready = true;
             // comença la festa dels Json
             out.println(json.getJSON(joc));
             out.flush();
@@ -110,23 +110,128 @@ public class Client extends Thread {
 
         JsonClass json = new JsonClass();
         // ens pillem tota la info.            després només actualitzarem als altres players en el joc. pero abans de retornar el json hem d'actualitzar el player
-        joc=json.getObject(recivedDataFromServer);
-        //joc.actualitzaClient(idPlayer, recivedDataFromServer);
 
-       // li tornem a posar la posició del player al joc abans d'enviar-lo
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosY((int)(gameMain.getPlayer1().getTranslateY()));
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosX((int)(gameMain.getPlayer1().getTranslateX()));
-        joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setDireccio((gameMain.getPlayer1().getDireccio()));
+        Joc jocRebut = json.getObject(recivedDataFromServer);
 
+        // actualitzo players
+        actualitzaPlayers(jocRebut);
 
+        // comprobar les bales. que comprobo?
+        //actualitzaBales(jocRebut);
 
         String resposta = json.getJSON(joc);
+
         // monitoritzar el que rebem del servidor
         System.out.println("i.  " + recivedDataFromServer);
 
 
-        return resposta;
+        return resposta;  // envio el json amb l'objecte joc
 
+
+    }
+
+    private void actualitzaPlayers(Joc jocRebut) {
+
+        List<Integer> nousPlayersPos = new ArrayList<>();
+        boolean esta = false;
+
+        // busco players nous que vinguin del servidor
+        for (int i = 0; i < jocRebut.getPlayers().size(); i++) {
+            for (Player p : joc.getPlayers()) {
+                if (p.getId() == jocRebut.getPlayers().get(i).getId()) esta = true;
+            }
+            if (!esta) nousPlayersPos.add(i);
+        }
+        // els afegeixo al joc
+        for (int i = 0; i < nousPlayersPos.size(); i++) {
+            joc.getPlayers().add(new Player(jocRebut.getPlayers().get(nousPlayersPos.get(i)).getId(), jocRebut.getPlayers().get(nousPlayersPos.get(i)).getPosY(), jocRebut.getPlayers().get(nousPlayersPos.get(i)).getPosX(), jocRebut.getPlayers().get(nousPlayersPos.get(i)).getDireccio()));
+        }
+
+        // actualitzo l'estat dels que no son l'usuari
+        for (Player p : joc.getPlayers()) {
+            for (Player p2 : jocRebut.getPlayers()) {
+                if (p.getId() != idPlayer) {
+                    if (p.getId() == p2.getId()) {
+                        p.setPosX(p2.getPosX());
+                        p.setPosY(p2.getPosY());
+                        p.setDireccio(p2.getDireccio());
+
+                    }
+                }
+            }
+        }
+
+
+//        joc.getPlayers().forEach(player -> {
+//            if (player.getId() != idPlayer) {
+//                for (Player p :
+//                        jocRebut.getPlayers()) {
+//                    if (p.getId() == player.getId()) {
+//                        player.setPosX(p.getPosX());
+//                        player.setPosY(p.getPosY());
+//                        player.setDireccio(p.getDireccio());
+//                        player.setId(p.getId());
+//                    }
+//                }
+//
+//            }
+//        });
+
+
+//                  nO ACABA DE TIRAR
+//        // comprovar usuaris nous al servidor. Els vells els actualitzem
+//        List<Integer> posicioDelsNousUsuaris= new ArrayList<>();
+//        boolean esta= false;
+//        for (int i = 0; i < jocRebut.getPlayers().size(); i++) {
+//            for (Player p :
+//                    joc.getPlayers()) {
+//                if (p.getId()==jocRebut.getPlayers().get(i).getId()&& p.getId()!=idPlayer){   // busquem el que té la mateixa id per actualitazar-lo. descartem el propi usuari
+//                    esta=true;
+////                    p=jocRebut.getPlayers().get(i);
+//                    p.setDireccio(jocRebut.getPlayers().get(i).getDireccio());
+//                    p.setPosX(jocRebut.getPlayers().get(i).getPosX());
+//                    p.setPosY(jocRebut.getPlayers().get(i).getPosY());
+//                }
+//            }
+//            if (!esta) posicioDelsNousUsuaris.add(i);
+//            esta=false;
+//        }
+//
+//        // ara afegeixo els usuaris nous que m'he guardat les les posicions
+//        for (int i = 0; i < posicioDelsNousUsuaris.size(); i++) {
+//            joc.getPlayers().add(jocRebut.getPlayers().get(posicioDelsNousUsuaris.get(i)));
+//        }
+
+
+    }
+
+    private void actualitzaBales(Joc jocRebut) {
+
+        boolean existeix = false;
+        // Per cada bala rebuda
+        for (Bala bReb : jocRebut.getBales()) {
+            // per cada bala que existeix actualment
+            for (Bala bAct : joc.getBales()) {
+                // comprovem si existeix per determinar si s'ha de crear o no
+                if (bAct.getIdBala() == bReb.getIdBala()) {
+                    existeix = true;
+                }
+            }
+            // si no existeix la creem, sino l'actualitzem la posició i dir
+            if (!existeix) joc.getBales().add(bReb);
+            /*else {
+                estatJoc.getBales().forEach(b -> {
+                    // busquem la bala corresponent i l'actualitzem
+                    if (b.getIdBala() == bReb.getIdBala()) {
+                        b.setDir(bReb.getDir());
+                        b.setPosX(bReb.getPosX());
+                        b.setPosY(bReb.getPosY());
+
+                    }
+                });
+            }*/
+            existeix = false;
+        }
 
     }
 

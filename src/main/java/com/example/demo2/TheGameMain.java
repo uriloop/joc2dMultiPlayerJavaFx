@@ -45,7 +45,6 @@ public class TheGameMain extends Application {
             @Override
             public void handle(long l) {
                 update();
-                enemics.forEach(e -> root.getChildren().add(e));
 
             }
         };
@@ -142,36 +141,26 @@ public class TheGameMain extends Application {
                 if (cicles - ciclesDispar > 150) {
                     ciclesDispar = cicles;
                     Sprite sp = player1.atacar(player1);
+                    client.getJoc().getBales().add(new Bala(idBales, (float) sp.getTranslateX(), (float) sp.getTranslateY(), sp.getDireccio()));
                     root.getChildren().add(sp);
-                    client.getJoc().getBales().add(new Bala(idBales, (float) player1.getTranslateX(), (float) player1.getTranslateY(), player1.getDireccio()));
                     idBales += 10;
                 }
 
             }
 
 
-/*
-
-                if (cicles - ciclesDispar > 150) {
-
-                    if (s.equals("COMMA")) {
-                        carrega = false;
-                        ciclesDispar = cicles;
-                        Sprite sp = player.atacar(player);
-                        root.getChildren().add(sp);
-                    }
-                } else if (!carrega) {
-                    player.carregar(player);
-                    carrega = true;
-                }
-
-*/
 
         });
+
+
+
+
+
 
         ciclesMov = cicles;
         input = new ArrayList<>();
 
+        // Per a que les bales avancin
 
         sprites().stream()
                 .filter(s -> s.getType().equals("atac"))
@@ -191,7 +180,7 @@ public class TheGameMain extends Application {
                 .forEach(Sprite::moveRight);
 
 
-        // Aixó per que morin els players
+        // per que morin els players amb les bales
 
         sprites().stream()
                 .filter(sprite -> sprite.getType().equals("atac"))
@@ -218,14 +207,11 @@ public class TheGameMain extends Application {
 
         // Esborrar els Sprites que estan DEAD=true
 
-        // intentant esborrar les bales que surten de pantalla o xoquen, o... que estan      dead = true;
-
-        sprites().forEach(sprite -> {
+       sprites().forEach(sprite -> {
             if (sprite.isDead()) {
                 root.getChildren().remove(sprite);
             }
         });
-
         cicles++;
     }
 
@@ -246,36 +232,58 @@ public class TheGameMain extends Application {
         if (client.isReady()) {
             this.id = client.getIdPlayer();
             if (idBales%10!=id)idBales += id;
+            // Aixó m'esborra l'sprite dels altres players per evitar l'estela
             sprites().forEach(sprite -> {
                 if (sprite.getType().equals("enemic")) {
                     root.getChildren().remove(sprite);
                 }
             });
-            sprites().forEach(sprite -> {
-                if (sprite.getType().equals("atac")){
-                    root.getChildren().remove(sprite);
-                }
-            });
 
+            // Com l'anterior pero per les bales
+//            sprites().forEach(sprite -> {
+//                if (sprite.getType().equals("atac")){
+//                    root.getChildren().remove(sprite);
+//                }
+//            });
+
+
+            // mostrem els enemics o altres players
             enemics = new ArrayList<>();
             client.getJoc().getPlayers().forEach(p -> {
                 if (p.getId() != id) {
                     // actualitzem tots els players menys el nostre   // de moment els tornem a crear
                     enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
+                }
+            });
+            enemics.forEach(e -> root.getChildren().add(e));
+
+
+
+            // actualitzo l'estat del player al joc per a que ho vegi el servidor.
+
+            for (Player player : client.getJoc().getPlayers()) {
+                if (player.getId()==id){
+
+                    player.setPosX((int)player1.getTranslateX());
+                    player.setPosY((int)player1.getTranslateY());
+                    player.setDireccio(player1.getDireccio());
 
                 }
-
-
-            });
-            int atacW = 16;
-            int atacH = 8;
-            int altura = 20;
-            for (Bala b :
-                    client.getJoc().getBales()) {
-                sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
-                        (int) (b.getPosY() + atacH + altura),
-                        atacW, atacH, b.getDir()));
             }
+
+
+
+
+//            int atacW = 16;
+//            int atacH = 8;
+//            int altura = 20;
+//            for (Bala b :
+//                    client.getJoc().getBales()) {
+//
+//                sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
+//                        (int) (b.getPosY() + atacH + altura),
+//                        atacW, atacH, b.getDir()));
+//            }
 
 
         }

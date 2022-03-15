@@ -18,19 +18,19 @@ public class Joc implements Serializable {
         this.players = players;
     }
 
-    public List<Player> getPlayers() {
+    public  List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
+    public  void setPlayers(List<Player> players) {
         this.players = players;
     }
 
-    public List<Bala> getBales() {
+    public  List<Bala> getBales() {
         return bales;
     }
 
-    public void setBales(List<Bala> bales) {
+    public  void setBales(List<Bala> bales) {
         this.bales = bales;
     }
 }

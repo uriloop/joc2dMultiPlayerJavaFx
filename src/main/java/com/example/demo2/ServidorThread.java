@@ -43,7 +43,7 @@ public class ServidorThread extends Thread {
         System.out.println("i. jug_" + (idPropia) + " Conexió establerta");
         try {
             // primer missatge on li passem el num de player per determinar la posició inicial i el color del usuari
-            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f + (idPropia * 100), Player.Direccio.S));
+            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f , Player.Direccio.S));
             msgSortint = String.valueOf(idPropia);
             out.println(msgSortint);
             out.flush();
@@ -89,20 +89,23 @@ public class ServidorThread extends Thread {
     // juntar tots els msgEntrants dels diferents jugadors, posar en comu i retornar el json amb les posicions
     private String generarResposta(String msgEntrant) {
 
+        // mapejo a un objecte provisional d'on agafar les dades que realment m'interessa actualitzar
         JsonClass json = new JsonClass();
         Joc jocRebut = json.getObject(msgEntrant);
 
-        // actualitzem el joc
+        // actualitzem el joc:      player   i   bales
         actualitzaPlayer(jocRebut);
-        actualitzaBales(jocRebut);
+     //   actualitzaBales(jocRebut);
 
-        // creem la resposta amb l'objecte joc que hem modificat
+        // creem la resposta amb l'objecte joc que hem modificat i que es va modificant constantment amb el que envien la resta de players
         String resposta = json.getJSON(estatJoc);
+
+
         // per monitoritzar el que passa al servidor
         System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
         System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
 
-        return resposta;//new Scanner(System.in).nextLine();
+        return resposta;    // retornem el json de l'estat del joc
     }
 
     private void actualitzaBales(Joc jocRebut) {
