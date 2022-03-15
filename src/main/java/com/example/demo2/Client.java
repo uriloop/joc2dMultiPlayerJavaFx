@@ -113,7 +113,7 @@ public class Client extends Thread {
         joc=json.getObject(recivedDataFromServer);
         //joc.actualitzaClient(idPlayer, recivedDataFromServer);
 
-       // try{}catch(Exception e){e.printStackTrace();}
+       // li tornem a posar la posició del player al joc abans d'enviar-lo
         joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosY((int)(gameMain.getPlayer1().getTranslateY()));
         joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setPosX((int)(gameMain.getPlayer1().getTranslateX()));
         joc.getPlayers().stream().filter(p-> p.getId()==idPlayer).toList().get(0).setDireccio((gameMain.getPlayer1().getDireccio()));
@@ -121,8 +121,6 @@ public class Client extends Thread {
 
 
         String resposta = json.getJSON(joc);
-
-
         // monitoritzar el que rebem del servidor
         System.out.println("i.  " + recivedDataFromServer);
 

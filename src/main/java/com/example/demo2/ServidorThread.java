@@ -91,34 +91,25 @@ public class ServidorThread extends Thread {
 
         JsonClass json = new JsonClass();
         Joc jocRebut = json.getObject(msgEntrant);
-        // actualitzem el jugador que ens envia
-       /* Player plAModificar= estatJoc.getPlayers().stream().filter(player -> player.getId()==idPropia).toList().get(0);
-        Player plQueArriba= jocRebut.getPlayers().stream().filter(player -> player.getId()!=idPropia).toList().get(0);
 
-        plAModificar.setDireccio(plQueArriba.getDireccio());
-        plAModificar.setPosX(plQueArriba.getPosX());
-        plAModificar.setPosY(plQueArriba.getPosY());*/
+        // actualitzem el joc
+        actualitzaPlayer(jocRebut);
+        actualitzaBales(jocRebut);
 
-        estatJoc.getPlayers().forEach(player -> {
-            if (player.getId() == idPropia) {
-                for (Player p :
-                        jocRebut.getPlayers()) {
-                    if (p.getId() == idPropia) {
-                        player.setPosX(p.getPosX());
-                        player.setPosY(p.getPosY());
-                        player.setDireccio(p.getDireccio());
-                        player.setId(p.getId());
+        // creem la resposta amb l'objecte joc que hem modificat
+        String resposta = json.getJSON(estatJoc);
+        // per monitoritzar el que passa al servidor
+        System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
+        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
 
-                    }
-                }
+        return resposta;//new Scanner(System.in).nextLine();
+    }
 
-            }
-        });
-
+    private void actualitzaBales(Joc jocRebut) {
         boolean existeix = false;
         // Per cada bala rebuda
         for (Bala bReb : jocRebut.getBales()) {
-            // per cada bala que existeix acyualment
+            // per cada bala que existeix actualment
             for (Bala bAct :
                     estatJoc.getBales()) {
                 // comprovem si existeix per determinar si s'ha de crear o no
@@ -141,12 +132,25 @@ public class ServidorThread extends Thread {
             }
             existeix = false;
         }
-        String resposta = json.getJSON(estatJoc);
 
-        // per monitoritzar el que passa al servidor
-        System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
-        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
+    }
 
-        return resposta;//new Scanner(System.in).nextLine();
+    private void actualitzaPlayer(Joc jocRebut) {
+
+        estatJoc.getPlayers().forEach(player -> {
+            if (player.getId() == idPropia) {
+                for (Player p :
+                        jocRebut.getPlayers()) {
+                    if (p.getId() == idPropia) {
+                        player.setPosX(p.getPosX());
+                        player.setPosY(p.getPosY());
+                        player.setDireccio(p.getDireccio());
+                        player.setId(p.getId());
+                    }
+                }
+
+            }
+        });
+
     }
 }

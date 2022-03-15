@@ -143,8 +143,8 @@ public class TheGameMain extends Application {
                     ciclesDispar = cicles;
                     Sprite sp = player1.atacar(player1);
                     root.getChildren().add(sp);
-                    client.getJoc().getBales().add(new Bala(idBales,(float) player1.getTranslateX(), (float) player1.getTranslateY(), player1.getDireccio()));
-                    idBales+=10;
+                    client.getJoc().getBales().add(new Bala(idBales, (float) player1.getTranslateX(), (float) player1.getTranslateY(), player1.getDireccio()));
+                    idBales += 10;
                 }
 
             }
@@ -192,14 +192,21 @@ public class TheGameMain extends Application {
 
 
         // Aixó per que morin els players
+
         sprites().stream()
                 .filter(sprite -> sprite.getType().equals("atac"))
                 .forEach(atac -> {
-                    if (atac.getBoundsInParent().intersects(player1.getBoundsInParent())) {
-                        player1.setDead(true);
+                    for (Sprite sp :
+                            sprites()) {
+                        if (sp.getType().equals("enemic")) {
+                            if (atac.getBoundsInParent().intersects(sp.getBoundsInParent())) {
+                                sp.setDead(true);
 
+                            }
+                        }
                     }
                 });
+
 
         // eliminar atacs que han sortit del joc per cada costat de la pantalla :  només els poso a DEAD=true;
 
@@ -211,9 +218,7 @@ public class TheGameMain extends Application {
 
         // Esborrar els Sprites que estan DEAD=true
 
-
         // intentant esborrar les bales que surten de pantalla o xoquen, o... que estan      dead = true;
-
 
         sprites().forEach(sprite -> {
             if (sprite.isDead()) {
@@ -240,7 +245,7 @@ public class TheGameMain extends Application {
 
         if (client.isReady()) {
             this.id = client.getIdPlayer();
-            idBales=id;
+            if (idBales%10!=id)idBales += id;
             sprites().forEach(sprite -> {
                 if (sprite.getType().equals("enemic")) {
                     root.getChildren().remove(sprite);
@@ -253,24 +258,19 @@ public class TheGameMain extends Application {
                     // actualitzem tots els players menys el nostre   // de moment els tornem a crear
                     enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
 
-                } else {
-             /*   // akí el nostre
-                p.setDireccio(player1.getDireccio());
-                p.setPosX((int)player1.getTranslateX());
-                p.setPosY((int)player1.getTranslateY());*/
-                }
-                int atacW = 16;
-                int atacH = 8;
-                int altura = 20;
-                for (Bala b :
-                        client.getJoc().getBales()) {
-                    sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
-                            (int) (b.getPosY() + atacH + altura),
-                            atacW, atacH, b.getDir()));
                 }
 
 
             });
+            int atacW = 16;
+            int atacH = 8;
+            int altura = 20;
+            for (Bala b :
+                    client.getJoc().getBales()) {
+                sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
+                        (int) (b.getPosY() + atacH + altura),
+                        atacW, atacH, b.getDir()));
+            }
 
 
         }
