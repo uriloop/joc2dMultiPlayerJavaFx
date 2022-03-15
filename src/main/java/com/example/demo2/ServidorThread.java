@@ -106,6 +106,7 @@ public class ServidorThread extends Thread {
     }
 
     private void actualitzaBales(Joc jocRebut) {
+
         boolean existeix = false;
         // Per cada bala rebuda
         for (Bala bReb : jocRebut.getBales()) {
@@ -119,7 +120,7 @@ public class ServidorThread extends Thread {
             }
             // si no existeix la creem, sino l'actualitzem la posició i dir
             if (!existeix) estatJoc.getBales().add(bReb);
-            else {
+            /*else {
                 estatJoc.getBales().forEach(b -> {
                     // busquem la bala corresponent i l'actualitzem
                     if (b.getIdBala() == bReb.getIdBala()) {
@@ -129,7 +130,7 @@ public class ServidorThread extends Thread {
 
                     }
                 });
-            }
+            }*/
             existeix = false;
         }
 

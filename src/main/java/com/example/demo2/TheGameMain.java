@@ -251,6 +251,11 @@ public class TheGameMain extends Application {
                     root.getChildren().remove(sprite);
                 }
             });
+            sprites().forEach(sprite -> {
+                if (sprite.getType().equals("atac")){
+                    root.getChildren().remove(sprite);
+                }
+            });
 
             enemics = new ArrayList<>();
             client.getJoc().getPlayers().forEach(p -> {
