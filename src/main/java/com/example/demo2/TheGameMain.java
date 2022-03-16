@@ -28,7 +28,7 @@ public class TheGameMain extends Application {
     private Pane root = new Pane();
     private int margeJugadors = 25;
     private boolean carrega;
-    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN, 100, 100, 60, 90, Player.Direccio.S, 25);
+    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 60, 90, Player.Direccio.S, 25);
     private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
@@ -36,7 +36,7 @@ public class TheGameMain extends Application {
     private long idBales = 10;
 
 
-    private Parent createContent() {
+    public Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
         root.getChildren().add(player1);
 
@@ -339,16 +339,14 @@ public class TheGameMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        Scene scene = new Scene(createContent());
+        ViewManager viewManager= new ViewManager(this);
+        stage = viewManager.getMainStage() ;
 
         // posem a escoltar diferents tecles per als inputs
 
-        scene.setOnKeyPressed(e -> {
+        viewManager.getMainScene().setOnKeyPressed(e -> {
             input.add(e.getCode().toString());
         });
-
-
-        stage.setScene(scene);
         stage.show();
 
 
