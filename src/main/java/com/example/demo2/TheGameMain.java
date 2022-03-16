@@ -18,12 +18,12 @@ public class TheGameMain extends Application {
 
     ///////////7
 
-    Client client;
+    private Client client;
 
     /////////////777
 
-    float viewPortX = 1200;
-    float viewPortY = 800;
+    private float viewPortX = 1200;
+    private float viewPortY = 800;
 
     private Pane root = new Pane();
     private int margeJugadors = 25;
@@ -33,7 +33,7 @@ public class TheGameMain extends Application {
 
     private List<String> input = new ArrayList<>();
     private int id;
-    private long idBales;
+    private long idBales = 10;
 
 
     private Parent createContent() {
@@ -59,10 +59,10 @@ public class TheGameMain extends Application {
 
         updateEstatJoc();
 
-
-       inputs();
-
-       actualitzaPlayer();
+        if (!player1.isDead()) {
+            inputs();
+            actualitzaPlayer();
+        }
 
         // Per a que les bales avancin
 
@@ -84,21 +84,43 @@ public class TheGameMain extends Application {
                 .forEach(Sprite::moveRight);
 
 
-        // per que morin els players amb les bales
+        // PLAYERS I DEMÉS SPRITES A GESTIONAR
 
+        // per que morin els players amb les bales menys cada player amb les seves bales           el player principal el gestionem a part
+        // primer cal veure si estan morts ja des del servidor
         sprites().stream()
-                .filter(sprite -> sprite.getType().equals("atac"))
-                .forEach(atac -> {
-                    for (Sprite sp :
-                            sprites()) {
-                        if (sp.getType().equals("enemic")) {
-                            if (atac.getBoundsInParent().intersects(sp.getBoundsInParent())) {
-                                sp.setDead(true);
-
+                .filter(s -> s.getType().equals("enemic"))
+                .forEach(enemic -> {
+                    for (int i = 0; i < client.getJoc().getPlayers().size(); i++) {
+                        if (enemic.getIdSprite() == client.getJoc().getPlayers().get(i).getId()) {
+                            if (client.getJoc().getPlayers().get(i).isMort()) {
+                                enemic.setDead(true);
                             }
                         }
                     }
                 });
+
+        // després els posem a morts els que tinguin una colisió
+        sprites().stream()
+                .filter(sprite -> sprite.getType().equals("atac"))
+                .forEach(atac -> {
+                    for (Sprite players :
+                            sprites()) {
+                        if (players.getType().equals("enemic")) {
+                            if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
+                                if (atac.getIdSprite() % 10 != players.getIdSprite())
+                                    players.setDead(true);
+                            }
+                        } else if (players.getType().equals("player")) {
+                            if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
+                                if (atac.getIdSprite() % 10 != id)
+                                    players.setDead(true);
+                            }
+                        }
+                    }
+                });
+
+
 
 
         // eliminar atacs que han sortit del joc per cada costat de la pantalla :  només els poso a DEAD=true;
@@ -111,7 +133,7 @@ public class TheGameMain extends Application {
 
         // Esborrar els Sprites que estan DEAD=true         ESTIC ESBORRANT ELS ENEMICS QUE MOREN PERO NO ELS DONO PER MORTS AL JOC, PER TANT ES TORNEN A CREAR QUAN ARRIBEN DEL SERVIDOR   feina a fer quan aixó funcioni
 
-       sprites().forEach(sprite -> {
+        sprites().forEach(sprite -> {
             if (sprite.isDead()) {
                 root.getChildren().remove(sprite);
             }
@@ -121,11 +143,12 @@ public class TheGameMain extends Application {
 
     private void actualitzaPlayer() {
 
-        client.getJoc().getPlayers().forEach(p->{
-            if (p.getId()==id) {
+        client.getJoc().getPlayers().forEach(p -> {
+            if (p.getId() == id) {
                 p.setDireccio(player1.getDireccio());
-                p.setPosX((int)player1.getTranslateX());
-                p.setPosY((int)player1.getTranslateY());
+                p.setPosX((int) player1.getTranslateX());
+                p.setPosY((int) player1.getTranslateY());
+                p.setMort(player1.isDead());
             }
         });
 
@@ -211,7 +234,7 @@ public class TheGameMain extends Application {
             if (s.equals("COMMA")) {
                 if (cicles - ciclesDispar > 150) {
                     ciclesDispar = cicles;
-                    Sprite sp = player1.atacar(player1);
+                    Sprite sp = player1.atacar(player1, idBales);
                     client.getJoc().getBales().add(new Bala(idBales, (float) sp.getTranslateX(), (float) sp.getTranslateY(), sp.getDireccio()));
                     root.getChildren().add(sp);
                     idBales += 10;
@@ -220,12 +243,7 @@ public class TheGameMain extends Application {
             }
 
 
-
         });
-
-
-
-
 
 
         ciclesMov = cicles;
@@ -244,7 +262,7 @@ public class TheGameMain extends Application {
 
         if (client.isReady()) {
             this.id = client.getIdPlayer();
-            if (idBales%10!=id)idBales += id;
+            if (idBales % 10 != id) idBales += id;
             // Aixó m'esborra l'sprite dels altres players per evitar l'estela
             sprites().forEach(sprite -> {
                 if (sprite.getType().equals("enemic")) {
@@ -252,7 +270,7 @@ public class TheGameMain extends Application {
                 }
             });
 
-            // Com l'anterior pero per les bales
+            // Com l'anterior pero per les bales     LES BALES ES CREEN UN COP, NO S'ACTUALITZEN, NO VAL CREC
 //            sprites().forEach(sprite -> {
 //                if (sprite.getType().equals("atac")){
 //                    root.getChildren().remove(sprite);
@@ -262,12 +280,14 @@ public class TheGameMain extends Application {
 
             // mostrem els enemics o altres players
             enemics = new ArrayList<>();
-            client.getJoc().getPlayers().forEach(p -> {
-                if (p.getId() != id) {
-                    // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                    enemics.add(new Sprite("enemic", Color.RED, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
-                }
-            });
+            client.getJoc().getPlayers().stream()
+                    .filter(player -> !player.isMort())           // filtrem que no estigui mort i el tornem a crear com sprite
+                    .forEach(p -> {
+                        if (p.getId() != id) {
+                            // actualitzem tots els players menys el nostre   // de moment els tornem a crear
+                            enemics.add(new Sprite(p.getId(), "enemic", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
+                        }
+                    });
             enemics.forEach(e -> root.getChildren().add(e));
 
 
@@ -275,25 +295,26 @@ public class TheGameMain extends Application {
             int atacW = 16;
             int atacH = 8;
             client.getBalesAcrear().forEach(bala -> {
-                Sprite sp= new Sprite("atac", Color.RED, (int) (bala.getPosX()),
+                Sprite sp = new Sprite(bala.getIdBala(), "atac", Color.RED, (int) (bala.getPosX()),
                         (int) (bala.getPosY()),
-                        atacW, atacH, bala.getDir());
+                        bala.getDir()== Player.Direccio.S||bala.getDir()== Player.Direccio.N ? atacH: atacW, bala.getDir()== Player.Direccio.S||bala.getDir()== Player.Direccio.N ? atacW: atacH, bala.getDir());
                 root.getChildren().add(sp);
 
             });
 
             // Aixó és una llicencia ràpida que em permeto pero hi ha una clara falla d'encapsulament. les bales a crear hauria de pertanyer a TheGameMain més aviat i que client hi poogués fer modificacions...
-            client.balesAcrear=new ArrayList<>();
+            client.balesAcrear = new ArrayList<>();
 
 
             // actualitzo l'estat del player al joc per a que ho vegi el servidor.
 
             for (Player player : client.getJoc().getPlayers()) {
-                if (player.getId()==id){
+                if (player.getId() == id) {
 
-                    player.setPosX((int)player1.getTranslateX());
-                    player.setPosY((int)player1.getTranslateY());
+                    player.setPosX((int) player1.getTranslateX());
+                    player.setPosY((int) player1.getTranslateY());
                     player.setDireccio(player1.getDireccio());
+                    if (player1.isDead()) player.setMort(true);
 
                 }
             }

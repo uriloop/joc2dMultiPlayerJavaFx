@@ -14,9 +14,9 @@ import java.util.List;
 
 public class Client extends Thread {
 
-    String hostname;
+    private String hostname;
     int port;
-    JsonClass json;
+    private JsonClass json;
     boolean continueConnected;
 
     private Joc joc;
@@ -26,6 +26,7 @@ public class Client extends Thread {
     private int idPlayer;
     private boolean ready;
     TheGameMain gameMain;
+    List<Bala> balesAcrear=new ArrayList<>();
 
 
     public Client(String hostname, int port, TheGameMain gameMain) {
@@ -100,12 +101,8 @@ public class Client extends Thread {
 
     }
 
-    public Joc getJoc() {
-        return joc;
-    }
 
 // Tractem la rebuda de dades
-
     public String getRequest(String recivedDataFromServer) {
 
         JsonClass json = new JsonClass();
@@ -156,7 +153,10 @@ public class Client extends Thread {
                         p.setPosX(p2.getPosX());
                         p.setPosY(p2.getPosY());
                         p.setDireccio(p2.getDireccio());
-
+                        if (p.isMort()||p2.isMort()){
+                            p.setMort(true);
+                            p2.setMort(true);
+                        }
                     }
                 }
             }
@@ -206,7 +206,6 @@ public class Client extends Thread {
 
     }
 
-    List<Bala> balesAcrear=new ArrayList<>();
     private void actualitzaBales(Joc jocRebut) {
 
         boolean existeix = false;
@@ -219,26 +218,16 @@ public class Client extends Thread {
                     existeix = true;
                 }
             }
-            // si no existeix la creem, sino l'actualitzem la posició i dir        també la poso a una llista de bales a crear per a crear els sprites un sol cop
+            // si no existeix la creem, sino l'actualitzem la posició i direcció        també la poso a una llista de bales a crear per a crear els sprites un sol cop
             if (!existeix) {
                 joc.getBales().add(bReb);
                 balesAcrear.add(new Bala(bReb.getIdBala(), bReb.getPosX(), bReb.getPosY(), bReb.getDir()));
             }
-            /*else {
-                estatJoc.getBales().forEach(b -> {
-                    // busquem la bala corresponent i l'actualitzem
-                    if (b.getIdBala() == bReb.getIdBala()) {
-                        b.setDir(bReb.getDir());
-                        b.setPosX(bReb.getPosX());
-                        b.setPosY(bReb.getPosY());
 
-                    }
-                });
-            }*/
             existeix = false;
         }
 
-        // Aki el procés a la inversa? ja no cal
+
 
     }
 
@@ -248,6 +237,10 @@ public class Client extends Thread {
 
     public void setBalesAcrear(List<Bala> balesAcrear) {
         this.balesAcrear = balesAcrear;
+    }
+
+    public Joc getJoc() {
+        return joc;
     }
 
     public void setJoc(Joc joc) {

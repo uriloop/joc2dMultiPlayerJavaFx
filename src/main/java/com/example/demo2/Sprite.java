@@ -8,7 +8,12 @@ public class Sprite extends Rectangle {
 
     private int velMoviment= 2;
     int altura=20;
+    private boolean dead = false;
+    private String type=null;
+    private Player.Direccio direccio = Player.Direccio.S;
+    private long id;
 
+/*
     public Sprite(String type, Color color, int x, int y, int w, int h) {
         super(w,h,color);
         // per carregar els missatges
@@ -16,7 +21,7 @@ public class Sprite extends Rectangle {
         setTranslateX(x);
         setTranslateY(y);
 
-    }
+    }*/
 
     public void setDead(boolean dead) {
         this.dead = dead;
@@ -26,22 +31,31 @@ public class Sprite extends Rectangle {
         return dead;
     }
 
-    boolean dead = false;
-    private String type=null;
-    Player.Direccio direccio = Player.Direccio.S;
-
-    public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
+    // constructor basicament per les bales
+    public Sprite(long id,String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
         super(w, h, color);
         this.direccio = direccio;
+        this.id=id;
         this.type = type;
         setTranslateX(x);
         setTranslateY(y);
     }
 
-    // Constructor per especificar la velocitat de moviment
+    // Constructor per especificar la velocitat de moviment  -per al player-
 public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
         this.direccio = direccio;
+        this.type = type;
+        this.velMoviment=velocitat;
+        setTranslateX(x);
+        setTranslateY(y);
+        this.id=-1;
+    }
+    // Aquest per als enemics que necessito la seva id de sprite per identificar-los
+    public Sprite(long id,String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+        super(w, h, color);
+        this.direccio = direccio;
+        this.id=id;
         this.type = type;
         this.velMoviment=velocitat;
         setTranslateX(x);
@@ -81,7 +95,7 @@ public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direc
 
 
 
-    public Sprite atacar(Sprite sprite) {
+    public Sprite atacar(Sprite sprite,long id) {
 
 
 
@@ -93,20 +107,20 @@ public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direc
         // Comprovem la posicio de qui fa l'atac i referent a aixo fem que l'atac surti en la direccio en que mira qui fa l'atac
         switch (sprite.getDireccio()) {
             case W -> {
-                s = new Sprite("atac", Color.RED, (int) (sprite.getTranslateX()-atacW),
+                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()-atacW),
                         (int) (sprite.getTranslateY()+atacH+altura),
                         atacW, atacH, sprite.getDireccio());
             }
             case E -> {
-                s = new Sprite("atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth()),
+                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth()),
                         (int) (sprite.getTranslateY() +atacH+altura), atacW, atacH, sprite.getDireccio());
             }
             case S -> {
-                s = new Sprite("atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
+                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
                         (int) (sprite.getTranslateY()+ sprite.getWidth()-atacW+altura), atacH, atacW, sprite.getDireccio());
             }
             case N -> {
-                s = new Sprite("atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
+                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
                         (int) (sprite.getTranslateY()-atacW+altura), atacH, atacW, sprite.getDireccio());
             }
 
@@ -126,10 +140,15 @@ public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direc
         return type;
     }
 
-    public void carregar(Sprite sprite) {
-        /*Sprite s= new Sprite("message", Color.TRANSPARENT, (int) (sprite.getTranslateX()),
-                (int) (sprite.getTranslateY()),
-                120, 50);
-        return s;*/
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public long getIdSprite() {
+        return id;
+    }
+
+    public void setIdSprite(long id) {
+        this.id = id;
     }
 }

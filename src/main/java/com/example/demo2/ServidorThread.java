@@ -149,7 +149,7 @@ public class ServidorThread extends Thread {
                         player.setPosX(p.getPosX());
                         player.setPosY(p.getPosY());
                         player.setDireccio(p.getDireccio());
-                        player.setId(p.getId());
+                        player.setMort(p.isMort() || player.isMort());       // si esta mort en qualsevol lloc el mantenim a mort o cambiem a mort segons toqui
                     }
                 }
 

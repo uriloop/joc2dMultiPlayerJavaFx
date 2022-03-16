@@ -27,8 +27,8 @@ public class Player {
         return mort;
     }
 
-    public void setMort() {
-        this.mort = true;
+    public void setMort(boolean mort) {
+        this.mort = mort;
     }
 
     public void setId(int id) {
