@@ -271,6 +271,20 @@ public class TheGameMain extends Application {
             enemics.forEach(e -> root.getChildren().add(e));
 
 
+            // actualitzem les bales que arriben del servidor
+            int atacW = 16;
+            int atacH = 8;
+            client.getBalesAcrear().forEach(bala -> {
+                Sprite sp= new Sprite("atac", Color.RED, (int) (bala.getPosX()),
+                        (int) (bala.getPosY()),
+                        atacW, atacH, bala.getDir());
+                root.getChildren().add(sp);
+
+            });
+
+            // Aixó és una llicencia ràpida que em permeto pero hi ha una clara falla d'encapsulament. les bales a crear hauria de pertanyer a TheGameMain més aviat i que client hi poogués fer modificacions...
+            client.balesAcrear=new ArrayList<>();
+
 
             // actualitzo l'estat del player al joc per a que ho vegi el servidor.
 
@@ -283,20 +297,6 @@ public class TheGameMain extends Application {
 
                 }
             }
-
-
-
-
-//            int atacW = 16;
-//            int atacH = 8;
-//            int altura = 20;
-//            for (Bala b :
-//                    client.getJoc().getBales()) {
-//
-//                sprites().add(new Sprite("atac", Color.RED, (int) (b.getPosX() - atacW),
-//                        (int) (b.getPosY() + atacH + altura),
-//                        atacW, atacH, b.getDir()));
-//            }
 
 
         }

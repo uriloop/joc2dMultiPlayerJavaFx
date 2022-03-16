@@ -95,7 +95,7 @@ public class ServidorThread extends Thread {
 
         // actualitzem el joc:      player   i   bales
         actualitzaPlayer(jocRebut);
-     //   actualitzaBales(jocRebut);
+        actualitzaBales(jocRebut);
 
         // creem la resposta amb l'objecte joc que hem modificat i que es va modificant constantment amb el que envien la resta de players
         String resposta = json.getJSON(estatJoc);

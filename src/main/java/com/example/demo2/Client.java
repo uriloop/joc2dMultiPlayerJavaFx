@@ -206,6 +206,7 @@ public class Client extends Thread {
 
     }
 
+    List<Bala> balesAcrear=new ArrayList<>();
     private void actualitzaBales(Joc jocRebut) {
 
         boolean existeix = false;
@@ -221,6 +222,7 @@ public class Client extends Thread {
             // si no existeix la creem, sino l'actualitzem la posició i dir        també la poso a una llista de bales a crear per a crear els sprites un sol cop
             if (!existeix) {
                 joc.getBales().add(bReb);
+                balesAcrear.add(new Bala(bReb.getIdBala(), bReb.getPosX(), bReb.getPosY(), bReb.getDir()));
             }
             /*else {
                 estatJoc.getBales().forEach(b -> {
@@ -236,6 +238,16 @@ public class Client extends Thread {
             existeix = false;
         }
 
+        // Aki el procés a la inversa? ja no cal
+
+    }
+
+    public List<Bala> getBalesAcrear() {
+        return balesAcrear;
+    }
+
+    public void setBalesAcrear(List<Bala> balesAcrear) {
+        this.balesAcrear = balesAcrear;
     }
 
     public void setJoc(Joc joc) {
