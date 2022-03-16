@@ -4,6 +4,7 @@ public class Player {
 
     private float posY, posX;
     private int id;
+    private boolean mort=false;
 
     public int getId() {
         return id;
@@ -20,6 +21,14 @@ public class Player {
         this.posX = posX;
         this.direccio = direccio;
         this.id=id;
+    }
+
+    public boolean isMort() {
+        return mort;
+    }
+
+    public void setMort() {
+        this.mort = true;
     }
 
     public void setId(int id) {

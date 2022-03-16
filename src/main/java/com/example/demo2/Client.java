@@ -117,7 +117,7 @@ public class Client extends Thread {
         actualitzaPlayers(jocRebut);
 
         // comprobar les bales. que comprobo?
-        //actualitzaBales(jocRebut);
+        actualitzaBales(jocRebut);
 
         String resposta = json.getJSON(joc);
 
@@ -141,6 +141,7 @@ public class Client extends Thread {
                 if (p.getId() == jocRebut.getPlayers().get(i).getId()) esta = true;
             }
             if (!esta) nousPlayersPos.add(i);
+            esta=false;
         }
         // els afegeixo al joc
         for (int i = 0; i < nousPlayersPos.size(); i++) {
@@ -217,8 +218,10 @@ public class Client extends Thread {
                     existeix = true;
                 }
             }
-            // si no existeix la creem, sino l'actualitzem la posició i dir
-            if (!existeix) joc.getBales().add(bReb);
+            // si no existeix la creem, sino l'actualitzem la posició i dir        també la poso a una llista de bales a crear per a crear els sprites un sol cop
+            if (!existeix) {
+                joc.getBales().add(bReb);
+            }
             /*else {
                 estatJoc.getBales().forEach(b -> {
                     // busquem la bala corresponent i l'actualitzem

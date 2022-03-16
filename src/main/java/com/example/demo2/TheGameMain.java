@@ -60,10 +60,81 @@ public class TheGameMain extends Application {
         updateEstatJoc();
 
 
+       inputs();
+
+       actualitzaPlayer();
+
+        // Per a que les bales avancin
+
+        sprites().stream()
+                .filter(s -> s.getType().equals("atac"))
+                .filter(s -> s.getDireccio() == Player.Direccio.S)
+                .forEach(Sprite::moveDown);
+        sprites().stream()
+                .filter(s -> s.getType().equals("atac"))
+                .filter(s -> s.getDireccio() == Player.Direccio.N)
+                .forEach(Sprite::moveUp);
+        sprites().stream()
+                .filter(s -> s.getType().equals("atac"))
+                .filter(s -> s.getDireccio() == Player.Direccio.W)
+                .forEach(Sprite::moveLeft);
+        sprites().stream()
+                .filter(s -> s.getType().equals("atac"))
+                .filter(s -> s.getDireccio() == Player.Direccio.E)
+                .forEach(Sprite::moveRight);
+
+
+        // per que morin els players amb les bales
+
+        sprites().stream()
+                .filter(sprite -> sprite.getType().equals("atac"))
+                .forEach(atac -> {
+                    for (Sprite sp :
+                            sprites()) {
+                        if (sp.getType().equals("enemic")) {
+                            if (atac.getBoundsInParent().intersects(sp.getBoundsInParent())) {
+                                sp.setDead(true);
+
+                            }
+                        }
+                    }
+                });
+
+
+        // eliminar atacs que han sortit del joc per cada costat de la pantalla :  només els poso a DEAD=true;
+
+        sprites().stream()
+                .filter(s -> s.getType().equals("atac"))
+                .filter(s -> s.getTranslateY() + s.getHeight() < 0 || s.getTranslateY() - s.getHeight() > viewPortY
+                        || s.getTranslateX() + s.getWidth() < 0 || s.getTranslateX() - s.getWidth() > viewPortX)
+                .forEach(s -> s.setDead(true));
+
+        // Esborrar els Sprites que estan DEAD=true         ESTIC ESBORRANT ELS ENEMICS QUE MOREN PERO NO ELS DONO PER MORTS AL JOC, PER TANT ES TORNEN A CREAR QUAN ARRIBEN DEL SERVIDOR   feina a fer quan aixó funcioni
+
+       sprites().forEach(sprite -> {
+            if (sprite.isDead()) {
+                root.getChildren().remove(sprite);
+            }
+        });
+        cicles++;
+    }
+
+    private void actualitzaPlayer() {
+
+        client.getJoc().getPlayers().forEach(p->{
+            if (p.getId()==id) {
+                p.setDireccio(player1.getDireccio());
+                p.setPosX((int)player1.getTranslateX());
+                p.setPosY((int)player1.getTranslateY());
+            }
+        });
+
+    }
+
+    private void inputs() {
         input.forEach(s -> {
 
             /////  PROVANT DIAGONALS
-
 
             List<String> dir = new ArrayList<>();
 
@@ -159,64 +230,6 @@ public class TheGameMain extends Application {
 
         ciclesMov = cicles;
         input = new ArrayList<>();
-
-        // Per a que les bales avancin
-
-        sprites().stream()
-                .filter(s -> s.getType().equals("atac"))
-                .filter(s -> s.getDireccio() == Player.Direccio.S)
-                .forEach(Sprite::moveDown);
-        sprites().stream()
-                .filter(s -> s.getType().equals("atac"))
-                .filter(s -> s.getDireccio() == Player.Direccio.N)
-                .forEach(Sprite::moveUp);
-        sprites().stream()
-                .filter(s -> s.getType().equals("atac"))
-                .filter(s -> s.getDireccio() == Player.Direccio.W)
-                .forEach(Sprite::moveLeft);
-        sprites().stream()
-                .filter(s -> s.getType().equals("atac"))
-                .filter(s -> s.getDireccio() == Player.Direccio.E)
-                .forEach(Sprite::moveRight);
-
-
-        // per que morin els players amb les bales
-
-        sprites().stream()
-                .filter(sprite -> sprite.getType().equals("atac"))
-                .forEach(atac -> {
-                    for (Sprite sp :
-                            sprites()) {
-                        if (sp.getType().equals("enemic")) {
-                            if (atac.getBoundsInParent().intersects(sp.getBoundsInParent())) {
-                                sp.setDead(true);
-
-                            }
-                        }
-                    }
-                });
-
-
-        // eliminar atacs que han sortit del joc per cada costat de la pantalla :  només els poso a DEAD=true;
-
-        sprites().stream()
-                .filter(s -> s.getType().equals("atac"))
-                .filter(s -> s.getTranslateY() + s.getHeight() < 0 || s.getTranslateY() - s.getHeight() > viewPortY
-                        || s.getTranslateX() + s.getWidth() < 0 || s.getTranslateX() - s.getWidth() > viewPortX)
-                .forEach(s -> s.setDead(true));
-
-        // Esborrar els Sprites que estan DEAD=true
-
-       sprites().forEach(sprite -> {
-            if (sprite.isDead()) {
-                root.getChildren().remove(sprite);
-            }
-        });
-        cicles++;
-    }
-
-    public Sprite getPlayer1() {
-        return player1;
     }
 
     private void updateEstatJoc() {
@@ -252,7 +265,7 @@ public class TheGameMain extends Application {
             client.getJoc().getPlayers().forEach(p -> {
                 if (p.getId() != id) {
                     // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                    enemics.add(new Sprite("enemic", Color.DARKOLIVEGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
+                    enemics.add(new Sprite("enemic", Color.RED, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
                 }
             });
             enemics.forEach(e -> root.getChildren().add(e));
@@ -297,6 +310,10 @@ public class TheGameMain extends Application {
 
 
     double ciclesDispar;
+
+    public Sprite getPlayer1() {
+        return player1;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
