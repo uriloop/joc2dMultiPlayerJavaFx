@@ -8,6 +8,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.FileInputStream;
@@ -15,20 +16,21 @@ import java.io.FileNotFoundException;
 
 public class Boto extends Button {
 
-    private final String FONT_PATH= "src/main/java/com/example/demo2/model/resources/retrolab_400.otf";
+    private final String FONT_PATH= "src/main/resources/retrolab_400.otf";
   /*  private static final String BUTTON_ON_STYLE= "-fx-background-color: transparent; -fx-background-image: url('../../../../../resources/imatges/button_play_on.png')";  // no em carrega les imatges
     private static final String BUTTON_OFF_STYLE= "-fx-background-color: transparent; -fx-background-image: url('../../../../../resources/imatges/button_play_off.png')";
 */
 
-    private static final String BUTTON_ON_STYLE= "-fx-background-image: url('../../../../../resources/imatges/button_play_on.png')";  // no em carrega les imatges
-    private static final String BUTTON_OFF_STYLE= "-fx-background-image: url('../../../../../resources/imatges/button_play_on.png')";  // no em carrega les imatges
+    private static final String BUTTON_ON_STYLE= "-fx-background-color: transparent; -fx-background-image: url('button_play_on.png')";  // no em carrega les imatges
+    private static final String BUTTON_OFF_STYLE= "-fx-background-color: transparent; -fx-background-image: url('button_play_off.png')";  // no em carrega les imatges
 
 
-    private float width=300;
-    private float height=100;
+    private float width=197;
+    private float height=60;
     public Boto(String s) {
         setText(s);
-        setButtonFont(FONT_PATH,23);
+        setTextFill(Color.AQUAMARINE);
+        setButtonFont(FONT_PATH,32);
         setPrefWidth(width);
         setPrefHeight(height);
         setStyle(BUTTON_OFF_STYLE);

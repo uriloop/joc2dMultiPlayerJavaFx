@@ -8,4 +8,6 @@ module com.example.demo2 {
 
     opens com.example.demo2 to javafx.fxml, com.fasterxml.jackson.databind;
     exports com.example.demo2;
+    exports com.example.demo2.view;
+    opens com.example.demo2.view to com.fasterxml.jackson.databind, javafx.fxml;
 }
