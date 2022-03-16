@@ -4,6 +4,7 @@ import com.example.demo2.view.ViewManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,6 +26,13 @@ public class TheGameMain extends Application {
     private float viewPortX = 1200;
     private float viewPortY = 800;
 
+    private final static String BACKGROUND_IMAGE = "/resources/deep_blue.png";
+    private final static String OTHER_PLAYER_IMAGE = "/resources/deep_blue.png";
+
+
+    private Stage mainStage;
+    private Scene mainScene;
+
     private String ip;
     private Pane root = new Pane();
     private int margeJugadors = 25;
@@ -36,6 +44,37 @@ public class TheGameMain extends Application {
     private int id;
     private long idBales = 10;
 
+    public List<String> getInput() {
+        return input;
+    }
+
+    public void setInput(List<String> input) {
+        this.input = input;
+    }
+
+    public Stage getMainStage() {
+        return mainStage;
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public Scene getMainScene() {
+        return mainScene;
+    }
+
+    public void setMainScene(Scene mainScene) {
+        this.mainScene = mainScene;
+    }
+
+    public void setRoot(Pane root) {
+        this.root = root;
+    }
+
+    public Pane getRoot() {
+        return root;
+    }
 
     public Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);

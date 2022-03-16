@@ -26,7 +26,7 @@ public class ViewManager {
 private TextField ipField;
     private AnchorPane mainPane;
     private Scene mainScene;
-    private Stage mainstage;
+    private Stage mainStage;
     private TheGameMain theGameMain;
 
     public ViewManager(TheGameMain theGameMain) {
@@ -38,8 +38,8 @@ private TextField ipField;
         //mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH,ip);
         //
 
-        mainstage = new Stage();
-        mainstage.setScene(mainScene);
+        mainStage = new Stage();
+        mainStage.setScene(mainScene);
 
         createButtons();
         createBackground();
@@ -49,10 +49,6 @@ private TextField ipField;
 
     }
 
-    public void start(String ip){
-        theGameMain.setIp(ip);
-        mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH);
-    }
 
     private void createLabelIP() {
         Label labelIP =new Label();
@@ -94,7 +90,14 @@ private TextField ipField;
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    start(ipField.getText());
+                    theGameMain.setRoot(new Pane());   // AIXXÓ SERIA EL ROOT QUE TINC AL THE GAME
+                    theGameMain.setMainScene(new Scene(theGameMain.createContent(), WIDTH,HEIGHT));
+                    theGameMain.setMainStage(new Stage());
+                    theGameMain.getMainStage().setScene(theGameMain.getMainScene());
+                    startNewGame(mainStage,ipField.getText());
+
+                   /* GameViewManager gameVM=new GameViewManager();
+                    gameVM.startNewGame(mainStage,ipField.getText());*/
                 }
             }
         });
@@ -102,6 +105,17 @@ private TextField ipField;
 
         mainPane.getChildren().add(playButton);
 
+
+    }
+
+    public void startNewGame(Stage mainStage,  String ip){
+        theGameMain.setIp(ip);
+        this.mainStage=mainStage;
+        this.mainStage.hide();
+        theGameMain.getMainScene().setOnKeyPressed(e -> {
+            theGameMain.getInput().add(e.getCode().toString());
+        });
+        theGameMain.getMainStage().show();
 
     }
 
@@ -138,6 +152,6 @@ mainPane.getChildren().add(logo);
 
     public Stage getMainStage() {
 
-        return mainstage;
+        return mainStage;
     }
 }
