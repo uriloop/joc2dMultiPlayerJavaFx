@@ -24,7 +24,7 @@ public class Boto extends Button {
     private static final String BUTTON_ON_STYLE= "-fx-background-color: transparent; -fx-background-image: url('button_play_on.png')";  // no em carrega les imatges
     private static final String BUTTON_OFF_STYLE= "-fx-background-color: transparent; -fx-background-image: url('button_play_off.png')";  // no em carrega les imatges
 
-
+    private boolean play=false;
     private float width=197;
     private float height=60;
     public Boto(String s) {
@@ -64,6 +64,7 @@ public class Boto extends Button {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)){
                     setButtonPressed();
+                    play=true;
                 }
             }
         });

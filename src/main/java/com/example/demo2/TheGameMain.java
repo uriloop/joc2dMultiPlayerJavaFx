@@ -25,6 +25,7 @@ public class TheGameMain extends Application {
     private float viewPortX = 1200;
     private float viewPortY = 800;
 
+    private String ip;
     private Pane root = new Pane();
     private int margeJugadors = 25;
     private boolean carrega;
@@ -255,7 +256,9 @@ public class TheGameMain extends Application {
         // mirar el joc i per cada enemic, és a dir tots menys el meu player
 
         if (client == null) {
-            client = new Client("localhost", 5555, this);
+          //  client = new Client("localhost", 5555, this);
+            client = new Client(ip, 5555, this);
+
             client.start();
         }
         // akí posem el ready.
@@ -329,6 +332,13 @@ public class TheGameMain extends Application {
         return root.getChildren().stream().map(n -> (Sprite) n).collect(Collectors.toList());
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
     double ciclesDispar;
 

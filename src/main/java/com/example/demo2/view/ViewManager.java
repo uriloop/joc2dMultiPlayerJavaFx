@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -22,17 +23,19 @@ public class ViewManager {
 
     private final int WIDTH = 1200;
     private final int HEIGHT = 800;
-
+private TextField ipField;
     private AnchorPane mainPane;
     private Scene mainScene;
     private Stage mainstage;
+    private TheGameMain theGameMain;
 
     public ViewManager(TheGameMain theGameMain) {
 
+        this.theGameMain=theGameMain;
         mainPane = new AnchorPane();
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         // si no tira li posaré akí aixó
-        //mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH);
+        //mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH,ip);
         //
 
         mainstage = new Stage();
@@ -44,6 +47,11 @@ public class ViewManager {
         createIPField();
         createLabelIP();
 
+    }
+
+    public void start(String ip){
+        theGameMain.setIp(ip);
+        mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH);
     }
 
     private void createLabelIP() {
@@ -62,7 +70,7 @@ public class ViewManager {
 
     private void createIPField() {
 
-        TextField ipField= new TextField();
+        ipField= new TextField();
         ipField.setLayoutX(WIDTH/2f-(120));
         ipField.setLayoutY(500);
         ipField.setAlignment(Pos.CENTER);
@@ -73,10 +81,27 @@ public class ViewManager {
     }
 
     private void createButtons(){
+     createPlayButton();
+
+    }
+
+    private void createPlayButton() {
         Boto playButton= new Boto("Play!");
         playButton.setLayoutY(600);
         playButton.setLayoutX(WIDTH/2f-(playButton.getWidthBoto()/2));
+
+        playButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    start(ipField.getText());
+                }
+            }
+        });
+
+
         mainPane.getChildren().add(playButton);
+
 
     }
 
