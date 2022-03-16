@@ -4,6 +4,7 @@ import com.example.demo2.TheGameMain;
 import com.example.demo2.model.Boto;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -51,7 +52,13 @@ private TextField ipField;
 
     public void start(String ip){
         theGameMain.setIp(ip);
+        mainPane.getChildren().removeAll();
+        mainstage=new Stage();
         mainScene = new Scene(theGameMain.createContent(),HEIGHT,WIDTH);
+        mainstage.setScene(mainScene);
+
+
+
     }
 
     private void createLabelIP() {
@@ -136,7 +143,7 @@ mainPane.getChildren().add(logo);
         return mainScene;
     }
 
-    public Stage getMainStage() {
+    public Stage getMainStage(Stage stage) {
 
         return mainstage;
     }

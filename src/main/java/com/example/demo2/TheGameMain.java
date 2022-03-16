@@ -4,6 +4,7 @@ import com.example.demo2.view.ViewManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -20,21 +21,19 @@ public class TheGameMain extends Application {
 
     private Client client;
 
-    /////////////777
-
     private float viewPortX = 1200;
     private float viewPortY = 800;
 
     private String ip;
-    private Pane root = new Pane();
+    private Pane root= new Pane();
     private int margeJugadors = 25;
-    private boolean carrega;
     private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 60, 90, Player.Direccio.S, 25);
     private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
     private int id;
     private long idBales = 10;
+
 
 
     public Parent createContent() {
@@ -52,6 +51,7 @@ public class TheGameMain extends Application {
         timer.start();
 
         return root;
+
     }
 
     double ciclesMov = cicles;
@@ -350,7 +350,7 @@ public class TheGameMain extends Application {
     public void start(Stage stage) throws Exception {
 
         ViewManager viewManager= new ViewManager(this);
-        stage = viewManager.getMainStage() ;
+        stage = viewManager.getMainStage(stage);
 
         // posem a escoltar diferents tecles per als inputs
 
@@ -363,8 +363,6 @@ public class TheGameMain extends Application {
     }
 
     public static void main(String[] args) {
-
-
         launch();
 
     }
