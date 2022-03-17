@@ -38,7 +38,7 @@ public class TheGameMain extends Application {
     private Pane root = new Pane();
     private int margeJugadors = 25;
     private boolean carrega;
-    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 70, 120, Player.Direccio.S, 25);
+    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 80, 150, Player.Direccio.S, 25);
     private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
@@ -343,7 +343,7 @@ public class TheGameMain extends Application {
                     .forEach(p -> {
                         if (p.getId() != id) {
                             // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                            Sprite sp=new Sprite(p.getId(), "enemic", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 70, 120, p.getDireccio(), 25);
+                            Sprite sp=new Sprite(p.getId(), "enemic", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 80, 150, p.getDireccio(), 25);
                             enemics.add(sp);
                             sp.setImatgeActual(p.getDireccio());
                         }
