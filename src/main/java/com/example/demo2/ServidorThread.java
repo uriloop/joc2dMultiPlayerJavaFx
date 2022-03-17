@@ -103,8 +103,8 @@ public class ServidorThread extends Thread {
 
 
         // per monitoritzar el que passa al servidor
-    /*    System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
-        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);*/
+        System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
+        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
 
         return resposta;    // retornem el json de l'estat del joc
     }

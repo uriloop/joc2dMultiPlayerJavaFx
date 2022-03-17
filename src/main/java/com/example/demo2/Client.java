@@ -90,7 +90,7 @@ public class Client extends Thread {
                 //enviament el número i els intents
                 out.println(request);
                 // monitoritzem per veure que tot funciona
-           //     System.out.println("o. " + request);
+                System.out.println("o. " + request);
                 out.flush();
             }
             close(socket);
@@ -120,7 +120,7 @@ public class Client extends Thread {
         String resposta = json.getJSON(joc);
 
         // monitoritzar el que rebem del servidor
-       // System.out.println("i.  " + recivedDataFromServer);
+        System.out.println("i.  " + recivedDataFromServer);
 
 
         return resposta;  // envio el json amb l'objecte joc

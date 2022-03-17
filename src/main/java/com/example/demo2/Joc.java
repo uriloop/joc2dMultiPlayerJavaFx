@@ -9,7 +9,9 @@ public class Joc implements Serializable {
 
     private List<Player> players = new ArrayList<>();
 
-    private List<Bala> bales= new ArrayList<>();
+    private List<Enemic> enemics= new ArrayList<>();
+
+    private List<Bala> bales = new ArrayList<>();
 
     public Joc() {
     }
@@ -32,5 +34,9 @@ public class Joc implements Serializable {
 
     public  void setBales(List<Bala> bales) {
         this.bales = bales;
+    }
+
+    public List<Enemic> getEnemics(){
+        return this.enemics;
     }
 }
