@@ -35,16 +35,32 @@ public class Sprite extends Rectangle {
         Image img = null;
         switch (direccio.toString()) {
             case  "N"-> {
+                if (this.type.equals("players")){
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_n_quiet.png")));
+
+                }else
                 img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_n_quiet.png")));
             }
             case "S" -> {
+                if (this.type.equals("players")){
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_s_quiet.png")));
+
+                }else
                 img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_s_quiet.png")));
             }
             case "E" -> {
+                if (this.type.equals("players")){
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_e_quiet.png")));
+
+                }else
                 img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_e_quiet.png")));
 
             }
             case "W" -> {
+                if (this.type.equals("players")){
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_w_quiet.png")));
+
+                }else
                 img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_w_quiet.png")));
 
             }

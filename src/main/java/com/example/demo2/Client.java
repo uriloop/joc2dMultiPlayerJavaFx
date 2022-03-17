@@ -89,12 +89,13 @@ public class Client extends Thread {
                 request = getRequest(serverData);
                 //enviament el número i els intents
                 out.println(request);
-                System.out.println("o. " + request);
+                // monitoritzem per veure que tot funciona
+           //     System.out.println("o. " + request);
                 out.flush();
             }
             close(socket);
         } catch (UnknownHostException ex) {
-            System.out.println("Error de connexió. No existeix el host: " + ex.getMessage());
+            System.out.println("Error de connexió. No existeix l'host: " + ex.getMessage());
         } catch (IOException ex) {
             System.out.println("Error de connexió indefinit: " + ex.getMessage());
         }
@@ -119,7 +120,7 @@ public class Client extends Thread {
         String resposta = json.getJSON(joc);
 
         // monitoritzar el que rebem del servidor
-        System.out.println("i.  " + recivedDataFromServer);
+       // System.out.println("i.  " + recivedDataFromServer);
 
 
         return resposta;  // envio el json amb l'objecte joc
