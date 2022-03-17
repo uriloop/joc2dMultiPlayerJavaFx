@@ -1,17 +1,20 @@
 package com.example.demo2;
 
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class Sprite extends Rectangle {
 
 
-    private int velMoviment= 2;
-    int altura=20;
+    private int velMoviment = 2;
+    int altura = 20;
     private boolean dead = false;
-    private String type=null;
+    private String type = null;
     private Player.Direccio direccio = Player.Direccio.S;
     private long id;
+    private String imatgeActual;
 
 /*
     public Sprite(String type, Color color, int x, int y, int w, int h) {
@@ -23,6 +26,32 @@ public class Sprite extends Rectangle {
 
     }*/
 
+    public String getImatgeActual() {
+        return imatgeActual;
+    }
+
+
+    public void setImatgeActual(Player.Direccio direccio) {
+        Image img = null;
+        switch (direccio.toString()) {
+            case  "N"-> {
+                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_n_quiet.png")));
+            }
+            case "S" -> {
+                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_s_quiet.png")));
+            }
+            case "E" -> {
+                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_e_quiet.png")));
+
+            }
+            case "W" -> {
+                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_w_quiet.png")));
+
+            }
+        }
+        this.setFill(new ImagePattern(img));
+    }
+
     public void setDead(boolean dead) {
         this.dead = dead;
     }
@@ -32,32 +61,33 @@ public class Sprite extends Rectangle {
     }
 
     // constructor basicament per les bales
-    public Sprite(long id,String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
+    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
         super(w, h, color);
         this.direccio = direccio;
-        this.id=id;
+        this.id = id;
         this.type = type;
         setTranslateX(x);
         setTranslateY(y);
     }
 
     // Constructor per especificar la velocitat de moviment  -per al player-
-public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+    public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
         this.direccio = direccio;
         this.type = type;
-        this.velMoviment=velocitat;
+        this.velMoviment = velocitat;
         setTranslateX(x);
         setTranslateY(y);
-        this.id=-1;
+        this.id = -1;
     }
+
     // Aquest per als enemics que necessito la seva id de sprite per identificar-los
-    public Sprite(long id,String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
         this.direccio = direccio;
-        this.id=id;
+        this.id = id;
         this.type = type;
-        this.velMoviment=velocitat;
+        this.velMoviment = velocitat;
         setTranslateX(x);
         setTranslateY(y);
     }
@@ -83,20 +113,24 @@ public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direc
         setTranslateY(getTranslateY() - velMoviment);
         setTranslateX(getTranslateX() - velMoviment);
     }
+
     public void moveLeftDown() {
         setTranslateY(getTranslateY() + velMoviment);
-        setTranslateX(getTranslateX() - velMoviment);    }
+        setTranslateX(getTranslateX() - velMoviment);
+    }
+
     public void moveRightUp() {
         setTranslateY(getTranslateY() - velMoviment);
-        setTranslateX(getTranslateX() + velMoviment);    }
+        setTranslateX(getTranslateX() + velMoviment);
+    }
+
     public void moveRightDown() {
         setTranslateY(getTranslateY() + velMoviment);
-        setTranslateX(getTranslateX() + velMoviment);    }
+        setTranslateX(getTranslateX() + velMoviment);
+    }
 
 
-
-    public Sprite atacar(Sprite sprite,long id) {
-
+    public Sprite atacar(Sprite sprite, long id) {
 
 
         Sprite s = null;
@@ -107,21 +141,21 @@ public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direc
         // Comprovem la posicio de qui fa l'atac i referent a aixo fem que l'atac surti en la direccio en que mira qui fa l'atac
         switch (sprite.getDireccio()) {
             case W -> {
-                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()-atacW),
-                        (int) (sprite.getTranslateY()+atacH+altura),
+                s = new Sprite(id, "atac", Color.RED, (int) (sprite.getTranslateX() - atacW),
+                        (int) (sprite.getTranslateY() + atacH + altura),
                         atacW, atacH, sprite.getDireccio());
             }
             case E -> {
-                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth()),
-                        (int) (sprite.getTranslateY() +atacH+altura), atacW, atacH, sprite.getDireccio());
+                s = new Sprite(id, "atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth()),
+                        (int) (sprite.getTranslateY() + atacH + altura), atacW, atacH, sprite.getDireccio());
             }
             case S -> {
-                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
-                        (int) (sprite.getTranslateY()+ sprite.getWidth()-atacW+altura), atacH, atacW, sprite.getDireccio());
+                s = new Sprite(id, "atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth() / 2 - atacH / 2),
+                        (int) (sprite.getTranslateY() + sprite.getWidth() - atacW + altura), atacH, atacW, sprite.getDireccio());
             }
             case N -> {
-                s = new Sprite(id,"atac", Color.RED, (int) (sprite.getTranslateX()+ sprite.getWidth()/2 -atacH/2),
-                        (int) (sprite.getTranslateY()-atacW+altura), atacH, atacW, sprite.getDireccio());
+                s = new Sprite(id, "atac", Color.RED, (int) (sprite.getTranslateX() + sprite.getWidth() / 2 - atacH / 2),
+                        (int) (sprite.getTranslateY() - atacW + altura), atacH, atacW, sprite.getDireccio());
             }
 
         }

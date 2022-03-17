@@ -5,7 +5,9 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -26,7 +28,6 @@ public class TheGameMain extends Application {
     private float viewPortX = 1200;
     private float viewPortY = 800;
 
-    private final static String BACKGROUND_IMAGE = "/resources/deep_blue.png";
     private final static String OTHER_PLAYER_IMAGE = "/resources/deep_blue.png";
 
 
@@ -37,7 +38,7 @@ public class TheGameMain extends Application {
     private Pane root = new Pane();
     private int margeJugadors = 25;
     private boolean carrega;
-    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 60, 90, Player.Direccio.S, 25);
+    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 70, 120, Player.Direccio.S, 25);
     private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
@@ -76,8 +77,15 @@ public class TheGameMain extends Application {
         return root;
     }
 
+    private void createBackground(){
+        Image backgroundImage = new Image("background_grass.png",1200,800,false,true);
+        BackgroundImage background= new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,null);
+        root.setBackground(new Background(background));
+    }
+
     public Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
+        createBackground();
         root.getChildren().add(player1);
 
 
@@ -94,6 +102,9 @@ public class TheGameMain extends Application {
     }
 
     double ciclesMov = cicles;
+
+
+
 
     private void update() {
 
@@ -153,8 +164,11 @@ public class TheGameMain extends Application {
                             }
                         } else if (players.getType().equals("player")) {
                             if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
-                                if (atac.getIdSprite() % 10 != id)
+                                if (atac.getIdSprite() % 10 != id){
                                     players.setDead(true);
+                                    atac.setDead(true);
+                                }
+
                             }
                         }
                     }
@@ -204,29 +218,31 @@ public class TheGameMain extends Application {
 
             if (s.equals("D") || s.equals("RIGHT")) {
                 player1.setDireccio(Player.Direccio.E);
+                player1.setImatgeActual(Player.Direccio.E);
                 if (player1.getTranslateX() + player1.getWidth() + margeJugadors < viewPortX)
                     dir.add("-Dreta");
 
             }
             if (s.equals("A") || s.equals("LEFT")) {
                 player1.setDireccio(Player.Direccio.W);
+                player1.setImatgeActual(Player.Direccio.W);
                 if (player1.getTranslateX() - margeJugadors > 0)
                     dir.add("-Esquerre");
 
             }
             if (s.equals("W") || s.equals("UP")) {
                 player1.setDireccio(Player.Direccio.N);
+                player1.setImatgeActual(Player.Direccio.N);
                 if (player1.getTranslateY() - (float) margeJugadors * 0.8 > 0)
                     dir.add("-Dalt");
 
 
             }
             if (s.equals("S") || s.equals("DOWN")) {
-
                 player1.setDireccio(Player.Direccio.S);
+                player1.setImatgeActual(Player.Direccio.S);
                 if (player1.getTranslateY() + player1.getHeight() + margeJugadors < viewPortY)
                     dir.add("-Baix");
-
 
             }
 
@@ -327,7 +343,9 @@ public class TheGameMain extends Application {
                     .forEach(p -> {
                         if (p.getId() != id) {
                             // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                            enemics.add(new Sprite(p.getId(), "enemic", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 60, 90, p.getDireccio(), 25));
+                            Sprite sp=new Sprite(p.getId(), "enemic", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 70, 120, p.getDireccio(), 25);
+                            enemics.add(sp);
+                            sp.setImatgeActual(p.getDireccio());
                         }
                     });
             enemics.forEach(e -> root.getChildren().add(e));
