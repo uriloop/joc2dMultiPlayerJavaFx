@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
+
 public class ServidorThread extends Thread {
 
 // com comunico el serverThread amb el server per compartir les dades dels players???????
