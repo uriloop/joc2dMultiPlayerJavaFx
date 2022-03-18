@@ -27,8 +27,8 @@ public class TimerRondes {
     }
 
     public boolean haAcabatLespera() {
-
-        if (tempsGuardat+tempsEspera<System.currentTimeMillis()) return false;
+        System.out.println();
+        if (System.currentTimeMillis()-tempsGuardat<tempsEspera) return false;
         on=false;
         return true;
 

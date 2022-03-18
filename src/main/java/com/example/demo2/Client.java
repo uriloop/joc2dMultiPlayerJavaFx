@@ -93,8 +93,8 @@ public class Client extends Thread {
                 request = getRequest(serverData);
                 //enviament el número i els intents
                 out.println(request);
-
                 out.flush();
+                esborrarEnemicsMorts();
             }
             close(socket);
         } catch (UnknownHostException ex) {
@@ -105,11 +105,23 @@ public class Client extends Thread {
 
     }
 
+    private void esborrarEnemicsMorts() {
 
-// Tractem la rebuda de dades
+        List<Integer> posicionsEnemicsAEliminar= new ArrayList<>();
+        for (int i = 0; i < joc.getEnemics().size(); i++) {
+            if (!joc.getEnemics().get(i).isViu()) posicionsEnemicsAEliminar.add(i);
+        }
+        for (int i = 0; i < posicionsEnemicsAEliminar.size(); i++) {
+            joc.getEnemics().remove((int)posicionsEnemicsAEliminar.get(i));
+        }
+
+    }
+
+
+    // Tractem la rebuda de dades
     public String getRequest(String recivedDataFromServer) {
 
-        JsonClass json = new JsonClass();
+
         // ens pillem tota la info.            després només actualitzarem als altres players en el joc. pero abans de retornar el json hem d'actualitzar el player
 
         Joc jocRebut = json.getObject(recivedDataFromServer);
@@ -117,8 +129,11 @@ public class Client extends Thread {
         // actualitzo players
         actualitzaPlayers(jocRebut);
 
-        // comprobar les bales. que comprobo?
+        // comprobar les bales.
         actualitzaBales(jocRebut);
+
+        // actualitzem els enemics al nostre joc
+        actualitzaEnemics(jocRebut);
 
         String resposta = json.getJSON(joc);
 
@@ -130,8 +145,74 @@ public class Client extends Thread {
         log.add("o. " + resposta);
         System.out.println("o. " + resposta);
 
-
         return resposta;  // envio el json amb l'objecte joc
+
+
+    }
+
+    private void actualitzaEnemics(Joc jocRebut) {
+
+
+
+        /*
+                un cop hagi retornat que està mort l'enemic cap al servidor l'esborro i m'estalvio aixó
+
+        // busco enemics que han estat eliminats per el servidor
+        List<Integer> posicionsEnemicsAEliminar=  new ArrayList<>();
+        boolean esta = false;
+        for (int i = 0; i < joc.getEnemics().size(); i++) {
+            for (Enemic e :
+                    jocRebut.getEnemics()) {
+                if (e.getId()==joc.getEnemics().get(i).getId()) esta= true;
+            }
+            if (!esta) posicionsEnemicsAEliminar.add(i);
+            esta=false;
+        }
+        // els elimino del joc
+        for (int i = posicionsEnemicsAEliminar.size()-1; i >=0 ; i--) {
+            joc.getEnemics().remove(posicionsEnemicsAEliminar.get(i));
+        }
+*/
+        List<Integer> nousEnemicsPos = new ArrayList<>();
+        boolean esta = false;
+
+        // busco enemics nous que vinguin del servidor
+        for (int i = 0; i < jocRebut.getEnemics().size(); i++) {
+            for (Enemic e : joc.getEnemics()) {
+                if (e.getId() == jocRebut.getEnemics().get(i).getId()) esta = true;
+            }
+            if (!esta) nousEnemicsPos.add(i);
+            esta=false;
+        }
+
+        try{
+
+            // els afegeixo al joc
+            for (int i = 0; i < nousEnemicsPos.size(); i++) {
+                joc.getEnemics().add(new Enemic(jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getId(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosY(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosX(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getTipus()));
+            }
+
+        }catch (Exception e){
+
+        }
+
+
+        // actualitzo l'estat de la posició i l'estat de viu
+        for (Enemic e : joc.getEnemics()) {
+            for (Enemic e2 : jocRebut.getEnemics()) {
+                if (e.getId() != idPlayer) {
+                    if (e.getId() == e2.getId()) {
+                        e.setPosX(e2.getPosX());
+                        e.setPosY(e2.getPosY());
+                        if (!e.isViu()||!e2.isViu()){
+                            e.setViu(false);
+                            e2.setViu(false);
+                        }
+                    }
+                }
+            }
+        }
+
 
 
     }
@@ -256,13 +337,6 @@ public class Client extends Thread {
         this.joc = joc;
     }
 
-    public Joc getCoj() {
-        return coj;
-    }
-
-    public void setCoj(Joc coj) {
-        this.coj = coj;
-    }
 
     public void setIdPlayer(int idPlayer) {
         this.idPlayer = idPlayer;

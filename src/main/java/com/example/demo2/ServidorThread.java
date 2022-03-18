@@ -16,20 +16,20 @@ public class ServidorThread extends Thread {
     // Que arranca que???? el servidor va apart, només escolta.
     /*   El servidor arranca el client i el client arranca el game     ?????           */
 
-    private LogPartida log= new LogPartida();
+    private LogPartida log = new LogPartida();
     private JsonClass json;
-    private  Socket clientSocket = null;
-    private  BufferedReader in = null;
+    private Socket clientSocket = null;
+    private BufferedReader in = null;
     private PrintStream out = null;
     private String msgEntrant, msgSortint;
     boolean acabat;
     private Joc estatJoc;
     private int idPropia;
-    private long idsEnemics=0;
+    private long idsEnemics = 0;
     private String nick;
-    private TimerRondes tempRondes=new TimerRondes(20000);
+    private TimerRondes tempRondes = new TimerRondes(5000);
     private List<Enemic> enemicsDeLaRonda;
-    private int numEnemicsEnArena=3;
+    private final int numEnemicsEnArena = 3;
 
     public ServidorThread(Socket clientSocket, Joc estatJoc, int idPropia) {
         this.idPropia = idPropia;
@@ -54,7 +54,7 @@ public class ServidorThread extends Thread {
         tempRondes.startEspera();
         try {
             // primer missatge on li passem el num de player per determinar la posició inicial i el color del usuari
-            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f , Player.Direccio.S));
+            estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f, Player.Direccio.S));
             msgSortint = String.valueOf(idPropia);
             out.println(msgSortint);
             out.flush();
@@ -106,8 +106,6 @@ public class ServidorThread extends Thread {
 
     private void actualitzarEnemics() {
 
-
-
         estatJoc.getEnemics().forEach(enemic -> {
 
             // he de crear una diagonal fins l'objecte que volen atacar. bottom-center
@@ -117,50 +115,48 @@ public class ServidorThread extends Thread {
             // valors que vull:  posXdespresDelMoviment   posYdespresDelMoviment
             // Math.atan2(by-ay, bx-ax);     A: enemic    B: objectiu    (tinc el dubte de si tindrà negatiu i positiu... tenir-ho en compte si dona POSSIBLE ERROR BUSCA AKI)
 
-            double angle=Math.atan2(790-enemic.getPosY(), 600-enemic.getPosX());
+            if (enemic.getPosY() < 750) {
+                double angle = Math.atan2(790 - enemic.getPosY(), 600 - enemic.getPosX());
 
-            // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
-            // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
+                // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
+                // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
 
-            // desglosso el que avança en cada eix de coordenades
-            float movX= (float) (enemic.getVelMoviment() * Math.cos(angle));
-            float movY=(float) (enemic.getVelMoviment() * Math.sin(angle));
+                // desglosso el que avança en cada eix de coordenades
+                float movX = (float) (enemic.getVelMoviment() * Math.cos(angle));
+                float movY = (float) (enemic.getVelMoviment() * Math.sin(angle));
 
-            // actualitzo la posició de l'enemic   FI
-            enemic.setPosX(enemic.getPosX()+movX);
-            enemic.setPosX(enemic.getPosX()+movX);
-
-
-
+                // actualitzo la posició de l'enemic   FI
+                enemic.setPosX(enemic.getPosX() + movX);
+                enemic.setPosY(enemic.getPosY() + movY);
+            }
 
         });
-
-        //TODO next
 
 
     }
 
     private void spawnEnemics() {
 
+        if (enemicsDeLaRonda != null){
 
-        // una recursivitat per a que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
-        if (estatJoc.getEnemics().size()<numEnemicsEnArena&& enemicsDeLaRonda.size()>0){
-            estatJoc.getEnemics().add(enemicsDeLaRonda.get(enemicsDeLaRonda.size()-1));
-            enemicsDeLaRonda.remove(enemicsDeLaRonda.size()-1);
-            spawnEnemics();
+            // que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
+            while (estatJoc.getEnemics().size() < numEnemicsEnArena && enemicsDeLaRonda.size() > 0) {
+                estatJoc.getEnemics().add(enemicsDeLaRonda.get(enemicsDeLaRonda.size() - 1));
+                System.out.println("nou enemic --- ");
+                enemicsDeLaRonda.remove(enemicsDeLaRonda.size() - 1);
+            }
         }
 
 
     }
 
     private void generaRondes() {
-        if ( tempRondes.isOn()){
-            if (tempRondes.haAcabatLespera()){       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
-                enemicsDeLaRonda=(generaUnaLlistaDEnemics());
+        if (tempRondes.isOn()) {
+            if (tempRondes.haAcabatLespera()) {       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
+                enemicsDeLaRonda = (generaUnaLlistaDEnemics());
             }
-
-        }else{
-            if (enemicsDeLaRonda.size()==0){
+        } else {
+            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1) {
                 tempRondes.startEspera();
             }
         }
@@ -168,11 +164,11 @@ public class ServidorThread extends Thread {
 
     private List<Enemic> generaUnaLlistaDEnemics() {
 
-        List<Enemic> enemicsRandom= new ArrayList<>();
-        int numEnemicsRandom=(int)(Math.random()*10)+5;
+        List<Enemic> enemicsRandom = new ArrayList<>();
+        int numEnemicsRandom = (int) (Math.random() * 10) + 5;
         for (int i = 0; i < numEnemicsRandom; i++) {
-            Enemic e= new Enemic(Enemic.Tipus.PUMPKIN,idsEnemics);
-            idsEnemics++;
+            Enemic e = new Enemic(Enemic.Tipus.PUMPKIN, idsEnemics++);
+
             enemicsRandom.add(e);
         }
         return enemicsRandom;

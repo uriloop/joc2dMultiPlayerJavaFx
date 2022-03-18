@@ -9,6 +9,34 @@ public class Enemic {
     private long id;
     private Tipus tipus;
 
+    // constructor del client
+    public Enemic(long id, float posY, float posX, Tipus tipus) {
+        this.id=id;
+        this.posX=posX;
+        this.posY=posY;
+        this.tipus=tipus;
+        switch (tipus){
+            case BOSS ->  {
+                width=64;
+                height=64;
+                velMoviment=5;
+            }
+            case FLOATING -> {
+                width=32;
+                height=32;
+                velMoviment=10;
+
+            }
+            case PUMPKIN -> {
+                width=32;
+                height=32;
+                velMoviment=8;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + tipus);
+        }
+
+    }
+
     public enum Tipus{
         PUMPKIN, FLOATING, BOSS;
     }
@@ -85,5 +113,27 @@ public class Enemic {
 
     public long getId() {
         return id;
+    }
+
+
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Tipus getTipus() {
+        return tipus;
+    }
+
+    public void setTipus(Tipus tipus) {
+        this.tipus = tipus;
     }
 }

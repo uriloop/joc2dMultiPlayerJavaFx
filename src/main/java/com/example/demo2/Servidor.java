@@ -47,7 +47,7 @@ public class Servidor {
             for (int i = 0; i < 10; i++) {
                 System.out.print("=");
                 try {
-                    Thread.sleep(400);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                    // no faig res, saltarà i continuarà la conexió
                 }
