@@ -92,15 +92,17 @@ public class Enemic {
         // Random entre 0 i el viewPortX-(int)widthEnemic
         int posRandom = (int) (Math.random() * (2000));
         if (posRandom < 400) {
-            posX = 0-width;
+            posX = 0;
             posY = posRandom;
         } else if (posRandom > 1600) {
-            posX = 1200;
+            posX = 1200-width;
             posY = posRandom-1600;
         } else {
             posX= posRandom-400;
-            posY= 0-height;
+            posY= -height;
         }
+
+
 
     }
 
