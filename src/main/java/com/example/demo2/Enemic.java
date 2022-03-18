@@ -3,6 +3,7 @@ package com.example.demo2;
 public class Enemic {
 
     float posY, posX;
+    int velMoviment;
     boolean viu = true;
     private int width,height;
     private long id;
@@ -24,16 +25,21 @@ public class Enemic {
                 height=64;
                 posX=600-width;
                 posY=0;
+                velMoviment=5;
             }
             case FLOATING -> {
                 width=32;
                 height=32;
                 setRandomPosition();
+                velMoviment=10;
+
             }
             case PUMPKIN -> {
                 width=32;
                 height=32;
                 setRandomPosition();
+                velMoviment=8;
+
             }
             default -> throw new IllegalStateException("Unexpected value: " + tipus);
         }
@@ -51,6 +57,14 @@ public class Enemic {
 
     public void setPosY(float posY) {
         this.posY = posY;
+    }
+
+    public int getVelMoviment() {
+        return velMoviment;
+    }
+
+    public void setVelMoviment(int velMoviment) {   // per si rep un atac congelant
+        this.velMoviment = velMoviment;
     }
 
     public float getPosX() {

@@ -106,6 +106,35 @@ public class ServidorThread extends Thread {
 
     private void actualitzarEnemics() {
 
+
+
+        estatJoc.getEnemics().forEach(enemic -> {
+
+            // he de crear una diagonal fins l'objecte que volen atacar. bottom-center
+            // un cop arriben ja no es mouen
+
+            // valors que se:   xActual yActual  xFinal yFinal  distanciaDeCadaMoviment  // angleQueHaDeSeguir
+            // valors que vull:  posXdespresDelMoviment   posYdespresDelMoviment
+            // Math.atan2(by-ay, bx-ax);     A: enemic    B: objectiu    (tinc el dubte de si tindrà negatiu i positiu... tenir-ho en compte si dona POSSIBLE ERROR BUSCA AKI)
+
+            double angle=Math.atan2(790-enemic.getPosY(), 600-enemic.getPosX());
+
+            // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
+            // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
+
+            // desglosso el que avança en cada eix de coordenades
+            float movX= (float) (enemic.getVelMoviment() * Math.cos(angle));
+            float movY=(float) (enemic.getVelMoviment() * Math.sin(angle));
+
+            // actualitzo la posició de l'enemic   FI
+            enemic.setPosX(enemic.getPosX()+movX);
+            enemic.setPosX(enemic.getPosX()+movX);
+
+
+
+
+        });
+
         //TODO next
 
 
