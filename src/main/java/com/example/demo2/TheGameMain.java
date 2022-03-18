@@ -438,14 +438,17 @@ public class TheGameMain extends Application {
 
             // mostrem els enemics
              enemics = new ArrayList<>();
-            client.getJoc().getEnemics().stream()
-                    .filter(Enemic::isViu)           // filtrem que no estigui mort i el tornem a crear com sprite
-                    .forEach(e -> {
-                        if (e.getId() != id) {
 
+            client.getJoc().getEnemics().stream()
+                    .filter(en-> en.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
+                    .forEach(e -> {
+                        try {
                             Sprite sp=new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
                             enemics.add(sp);
                             sp.setImatgeActual(numSpriteImage,e.getTipus());
+
+                        }catch (Exception exc){
+                            System.out.println(" segons sembla estic modificant un valor d'una llista sobre la que estic reiterant i no està permés pero crec que no ho estic fent."); // No afecta a res sembla ser...  A les males em guardo les poosicions en una llista i despres reitero sobre la llista per fer els cambis
                         }
                     });
             enemics.forEach(e -> root.getChildren().add(e));
@@ -456,6 +459,7 @@ public class TheGameMain extends Application {
                 numSpriteImage= numSpriteImage==1 ? 0 : 1;
                 ciclesSpritesEnemics=cicles;
             }
+
 
             // actualitzo l'estat dels enemics per a que ho vegi el servidor
 

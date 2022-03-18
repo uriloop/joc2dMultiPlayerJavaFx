@@ -145,11 +145,11 @@ public class Client extends Thread {
 
         // monitoritzar el que rebem del servidor
         log.add("i.  " + recivedDataFromServer);
-        System.out.println("i.  " + recivedDataFromServer);
+       // System.out.println("i.  " + recivedDataFromServer);
 
         // monitoritzem per veure que tot funciona
         log.add("o. " + resposta);
-        System.out.println("o. " + resposta);
+        // System.out.println("o. " + resposta);
 
         return resposta;  // envio el json amb l'objecte joc
 
@@ -214,7 +214,7 @@ public class Client extends Thread {
             }
         }
 
-      /*  List<Integer> posAesborrar= new ArrayList<>();
+        List<Integer> posAesborrar= new ArrayList<>();
 
         for (int j = 0; j < jocRebut.getEnemics().size(); j++) {
             if (!jocRebut.getEnemics().get(j).isViu()){
@@ -235,7 +235,6 @@ public class Client extends Thread {
         for (int i = 0; i < posAesborrar.size(); i++) {
             joc.getEnemics().remove((int)posAesborrar.get(i));
         }
-*/
     }
 
     private void actualitzaPlayers(Joc jocRebut) {

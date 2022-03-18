@@ -161,7 +161,7 @@ public class ServidorThread extends Thread {
             if (!estatJoc.getEnemics().get(i).isViu()) posAesborrar.add(i);
         }
 
-        for (int i = 0; i < posAesborrar.size(); i++) {
+        for (int i =  posAesborrar.size()-1; i>=0; i--) {
             estatJoc.getEnemics().remove((int) posAesborrar.get(i));
         }
         if (enemicsDeLaRonda != null) {
@@ -169,7 +169,6 @@ public class ServidorThread extends Thread {
             // que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
             while (estatJoc.getEnemics().size() < numEnemicsEnArena && enemicsDeLaRonda.size() > 0) {
                 estatJoc.getEnemics().add(enemicsDeLaRonda.get(enemicsDeLaRonda.size() - 1));
-                System.out.println("nou enemic --- ");
                 enemicsDeLaRonda.remove(enemicsDeLaRonda.size() - 1);
             }
         }
@@ -187,7 +186,6 @@ public class ServidorThread extends Thread {
 
 
 
-        System.out.println("   SERV    " +estatJoc.getEnemics().size());
         if (enemicsDeLaRonda!=null  && !tempRondes.isOn()){
 
             if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 2 && ronda==0) {
