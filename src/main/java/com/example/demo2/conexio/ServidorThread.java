@@ -106,8 +106,7 @@ public class ServidorThread extends Thread {
 
     private void actualitzarEnemics(Joc jocRebut) {
 
-        // busco els enemics morts per esborrar-los
-
+        // busco els enemics morts per a posarlos a mort
         jocRebut.getEnemics().stream().filter(en -> !en.isViu())
                 .forEach(enemic -> {
                     for (Enemic e :
@@ -117,6 +116,7 @@ public class ServidorThread extends Thread {
                         }
                     }
                 });
+
 
 
         // Actualitzo moviment
@@ -152,8 +152,18 @@ public class ServidorThread extends Thread {
 
     private void spawnEnemics() {
 
+        /*for (int i = estatJoc.getEnemics().size()-1; i > 0 ; i--) {
+            if (!estatJoc.getEnemics().get(i).isViu()) estatJoc.getEnemics().remove(i);
+        }*/
+// esborro enemics
+        List<Integer> posAesborrar= new ArrayList<>();
+        for (int i = 0; i < estatJoc.getEnemics().size(); i++) {
+            if (!estatJoc.getEnemics().get(i).isViu()) posAesborrar.add(i);
+        }
 
-
+        for (int i = 0; i < posAesborrar.size(); i++) {
+            estatJoc.getEnemics().remove((int) posAesborrar.get(i));
+        }
         if (enemicsDeLaRonda != null) {
 
             // que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
@@ -164,34 +174,33 @@ public class ServidorThread extends Thread {
             }
         }
 
-
     }
 
+    int ronda=0;
     private void generaRondes() {
+
         if (tempRondes.isOn()) {
             if (tempRondes.haAcabatLespera()) {       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
                 enemicsDeLaRonda = (generaUnaLlistaDEnemics());
             }
         }
 
-        // esborro enemics
-        List<Integer> posAesborrar= new ArrayList<>();
-        for (int i = 0; i < estatJoc.getEnemics().size(); i++) {
-            if (!estatJoc.getEnemics().get(i).isViu()) posAesborrar.add(i);
-        }
 
-        for (int i = 0; i < posAesborrar.size(); i++) {
-            try {
-                estatJoc.getEnemics().remove((int) posAesborrar.get(i));
-            }catch(Exception e){}
-        }
 
         System.out.println("   SERV    " +estatJoc.getEnemics().size());
         if (enemicsDeLaRonda!=null  && !tempRondes.isOn()){
 
-            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1 ) {
-                estatJoc.setEnemics(new ArrayList<>());
+            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 2 && ronda==0) {
+
+                estatJoc.getEnemics().removeAll(estatJoc.getEnemics());
                 tempRondes.startEspera();
+                ronda++;
+            }
+            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1 && ronda>0) {
+
+                estatJoc.getEnemics().removeAll(estatJoc.getEnemics());
+                tempRondes.startEspera();
+
             }
         }
     }
@@ -223,11 +232,11 @@ public class ServidorThread extends Thread {
         actualitzaPlayer(jocRebut);
         actualitzaBales(jocRebut);
         // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
+        generaRondes();
+        spawnEnemics();
         actualitzarEnemics(jocRebut);
         // gestionar i crear olejades d'enemics que surtin en moments i llocs diversos
-        generaRondes();
         // spawnejar enemics de forma escalonada a la llista d'enemics del joc,  els va esborrant de la llista del thread.    tot plegat no tinc clar que ho hagi de fer el servidor thread. seria un Thread extern? una classe dedicada a aixó...
-        spawnEnemics();
 
         // creem la resposta amb l'objecte joc que hem modificat i que es va modificant constantment amb el que envien la resta de players
         String resposta = json.getJSON(estatJoc);

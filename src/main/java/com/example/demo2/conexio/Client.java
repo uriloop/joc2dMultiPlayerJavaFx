@@ -214,27 +214,28 @@ public class Client extends Thread {
             }
         }
 
-        List<Integer> posAesborrar= new ArrayList<>();
+      /*  List<Integer> posAesborrar= new ArrayList<>();
 
         for (int j = 0; j < jocRebut.getEnemics().size(); j++) {
             if (!jocRebut.getEnemics().get(j).isViu()){
-                joc.getEnemics().forEach(ene->{
-                    if (jocRebut.getEnemics().get(j).getId() == ene.getId()){
+                for (Enemic enemic :
+                        joc.getEnemics()) {
+                    if (jocRebut.getEnemics().get(j).getId() == enemic.getId()){
                         jocRebut.getEnemics().get(j).setViu(false);
-                        ene.setViu(false);
+                        enemic.setViu(false);
                         posAesborrar.add(j);
 
                     }
-                });
+                }
+
             }
         }
 
 
         for (int i = 0; i < posAesborrar.size(); i++) {
-            joc.getEnemics().remove()
+            joc.getEnemics().remove((int)posAesborrar.get(i));
         }
-
-
+*/
     }
 
     private void actualitzaPlayers(Joc jocRebut) {
