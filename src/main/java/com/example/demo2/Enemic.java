@@ -22,14 +22,14 @@ public class Enemic {
                 velMoviment = 0.05f;
             }
             case FLOATING -> {
-                width = 32;
-                height = 32;
+                width = 64;
+                height = 64;
                 velMoviment = 0.2f;
 
             }
             case PUMPKIN -> {
-                width = 32;
-                height = 32;
+                width = 64;
+                height = 64;
                 velMoviment = 0.1f;
             }
             default -> throw new IllegalStateException("Unexpected value: " + tipus);
@@ -90,15 +90,15 @@ public class Enemic {
     private void setRandomPosition() {
         //   vull que vinguin desde la part superior per no complicar i que vagin tots en direcció a algo que han de protegir per no liar, més endavant posaria que es dirigeixin a l'enemic més proper o que fixin un objectiu...
         // Random entre 0 i el viewPortX-(int)widthEnemic
-        int posRandom = (int) (Math.random() * (1600));
-        if (posRandom < 200) {
+        int posRandom = (int) (Math.random() * (2000));
+        if (posRandom < 400) {
             posX = 0-width;
             posY = posRandom;
-        } else if (posRandom > 1400) {
+        } else if (posRandom > 1600) {
             posX = 1200;
-            posY = posRandom-1400;
+            posY = posRandom-1600;
         } else {
-            posX= posRandom-200;
+            posX= posRandom-400;
             posY= 0-height;
         }
 

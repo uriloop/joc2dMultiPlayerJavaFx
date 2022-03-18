@@ -415,10 +415,10 @@ public class TheGameMain extends Application {
             // mostrem els enemics
              enemics = new ArrayList<>();
             client.getJoc().getEnemics().stream()
-                    .filter(enemic -> enemic.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
+                    .filter(Enemic::isViu)           // filtrem que no estigui mort i el tornem a crear com sprite
                     .forEach(e -> {
                         if (e.getId() != id) {
-                            // actualitzem tots els players menys el nostre   // de moment els tornem a crear
+
                             Sprite sp=new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
                             enemics.add(sp);
                             sp.setImatgeActual(numSpriteImage,e.getTipus());
@@ -428,12 +428,26 @@ public class TheGameMain extends Application {
 
             // moc els sprites dels enemics cada X cicles
 
-            if (cicles-ciclesSpritesEnemics>10){
+            if (cicles-ciclesSpritesEnemics>30){
                 numSpriteImage= numSpriteImage==1 ? 0 : 1;
                 ciclesSpritesEnemics=cicles;
             }
 
             // actualitzo l'estat dels enemics per a que ho vegi el servidor
+
+            enemics.forEach(e-> {
+                for (Enemic en :
+                        client.getJoc().getEnemics()) {
+                    if (e.getIdSprite() == en.getId()) {
+                        if (e.isDead()|| !en.isViu()){
+                            e.setDead(true);
+                            en.setViu(false);
+                        }
+
+
+                    }
+                };
+            });
 
         }
 
