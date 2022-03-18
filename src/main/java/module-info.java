@@ -10,4 +10,11 @@ module com.example.demo2 {
     exports com.example.demo2;
     exports com.example.demo2.view;
     opens com.example.demo2.view to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.example.demo2.model;
+    opens com.example.demo2.model to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.example.demo2.conexio;
+    opens com.example.demo2.conexio to com.fasterxml.jackson.databind, javafx.fxml;
+    exports com.example.demo2.utils;
+    opens com.example.demo2.utils to com.fasterxml.jackson.databind, javafx.fxml;
+
 }

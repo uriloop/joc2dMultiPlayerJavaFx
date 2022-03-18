@@ -1,6 +1,12 @@
-package com.example.demo2;
+package com.example.demo2.conexio;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo2.utils.JsonClass;
+import com.example.demo2.utils.LogPartida;
+import com.example.demo2.TheGameMain;
+import com.example.demo2.model.Bala;
+import com.example.demo2.model.Enemic;
+import com.example.demo2.model.Joc;
+import com.example.demo2.model.Player;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +32,7 @@ public class Client extends Thread {
     private int idPlayer;
     private boolean ready;
     TheGameMain gameMain;
-    List<Bala> balesAcrear = new ArrayList<>();
+    /*hauria de ser private*/public List<Bala> balesAcrear = new ArrayList<>();
 
     LogPartida log;
 
@@ -94,7 +100,7 @@ public class Client extends Thread {
                 //enviament el número i els intents
                 out.println(request);
                 out.flush();
-                esborrarEnemicsMorts();
+                //esborrarEnemicsMorts();
             }
             close(socket);
         } catch (UnknownHostException ex) {
@@ -105,7 +111,7 @@ public class Client extends Thread {
 
     }
 
-    private void esborrarEnemicsMorts() {
+   /* private void esborrarEnemicsMorts() {
 
         List<Integer> posicionsEnemicsAEliminar = new ArrayList<>();
         for (int i = 0; i < joc.getEnemics().size(); i++) {
@@ -115,7 +121,7 @@ public class Client extends Thread {
             joc.getEnemics().remove((int) posicionsEnemicsAEliminar.get(i));
         }
 
-    }
+    }*/
 
 
     // Tractem la rebuda de dades
@@ -154,9 +160,8 @@ public class Client extends Thread {
 
 
 
-        /*       // un cop hagi retornat que està mort l'enemic cap al servidor l'esborro i m'estalvio aixó
 
-        // busco enemics que han estat eliminats per el servidor
+        /*// busco enemics que han estat eliminats per el servidor
         List<Integer> posicionsEnemicsAEliminar=  new ArrayList<>();
         boolean esta = false;
         for (int i = 0; i < joc.getEnemics().size(); i++) {
@@ -169,7 +174,7 @@ public class Client extends Thread {
         }
         // els elimino del joc
         for (int i = posicionsEnemicsAEliminar.size()-1; i >=0 ; i--) {
-            joc.getEnemics().remove(posicionsEnemicsAEliminar.get(i));
+            joc.getEnemics().remove((int)posicionsEnemicsAEliminar.get(i));
         }*/
         List<Integer> nousEnemicsPos = new ArrayList<>();
         boolean esta = false;
@@ -203,13 +208,30 @@ public class Client extends Thread {
                     if (e.getId() == e2.getId()) {
                         e.setPosX(e2.getPosX());
                         e.setPosY(e2.getPosY());
-                        if (!e.isViu() || !e2.isViu()) {
-                            e.setViu(false);
-                            e2.setViu(false);
-                        }
+
                     }
                 }
             }
+        }
+
+        List<Integer> posAesborrar= new ArrayList<>();
+
+        for (int j = 0; j < jocRebut.getEnemics().size(); j++) {
+            if (!jocRebut.getEnemics().get(j).isViu()){
+                joc.getEnemics().forEach(ene->{
+                    if (jocRebut.getEnemics().get(j).getId() == ene.getId()){
+                        jocRebut.getEnemics().get(j).setViu(false);
+                        ene.setViu(false);
+                        posAesborrar.add(j);
+
+                    }
+                });
+            }
+        }
+
+
+        for (int i = 0; i < posAesborrar.size(); i++) {
+            joc.getEnemics().remove()
         }
 
 

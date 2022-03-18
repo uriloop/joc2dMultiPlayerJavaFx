@@ -1,5 +1,7 @@
 package com.example.demo2;
 
+import com.example.demo2.model.Enemic;
+import com.example.demo2.model.Player;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -75,6 +77,8 @@ public class Sprite extends Rectangle {
     public boolean isDead() {
         return dead;
     }
+
+
 
     // constructor basicament per les bales
     public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {

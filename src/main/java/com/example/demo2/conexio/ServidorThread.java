@@ -1,4 +1,12 @@
-package com.example.demo2;
+package com.example.demo2.conexio;
+
+import com.example.demo2.utils.JsonClass;
+import com.example.demo2.utils.LogPartida;
+import com.example.demo2.utils.TimerRondes;
+import com.example.demo2.model.Bala;
+import com.example.demo2.model.Enemic;
+import com.example.demo2.model.Joc;
+import com.example.demo2.model.Player;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,14 +15,12 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 
 public class ServidorThread extends Thread {
 
 // com comunico el serverThread amb el server per compartir les dades dels players???????
-    // Que arranca que???? el servidor va apart, només escolta.
-    /*   El servidor arranca el client i el client arranca el game     ?????           */
+
 
     private LogPartida log = new LogPartida();
     private JsonClass json;
@@ -102,16 +108,15 @@ public class ServidorThread extends Thread {
 
         // busco els enemics morts per esborrar-los
 
-        jocRebut.getEnemics().stream().filter(en-> !en.isViu())
+        jocRebut.getEnemics().stream().filter(en -> !en.isViu())
                 .forEach(enemic -> {
                     for (Enemic e :
                             estatJoc.getEnemics()) {
-                        if (enemic.getId()==e.getId()){
+                        if (enemic.getId() == e.getId()) {
                             e.setViu(false);
                         }
                     }
                 });
-
 
 
         // Actualitzo moviment
@@ -124,20 +129,21 @@ public class ServidorThread extends Thread {
             // valors que vull:  posXdespresDelMoviment   posYdespresDelMoviment
             // Math.atan2(by-ay, bx-ax);     A: enemic    B: objectiu    (tinc el dubte de si tindrà negatiu i positiu... tenir-ho en compte si dona POSSIBLE ERROR BUSCA AKI)
 
-            if (enemic.isViu()) {
-                double angle = Math.atan2(700 - enemic.getPosY(), 600 - enemic.getPosX());
 
-                // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
-                // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
+            double angle = Math.atan2(700 - enemic.getPosY(), 600 - enemic.getPosX());
 
-                // desglosso el que avança en cada eix de coordenades
-                float movX = (float) (enemic.getVelMoviment() * Math.cos(angle));
-                float movY = (float) (enemic.getVelMoviment() * Math.sin(angle));
+            // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
+            // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
 
-                // actualitzo la posició de l'enemic   FI
-                enemic.setPosX(enemic.getPosX() + movX);
-                enemic.setPosY(enemic.getPosY() + movY);
-            }
+            // desglosso el que avança en cada eix de coordenades
+            float movX = (float) (enemic.getVelMoviment() * Math.cos(angle));
+            float movY = (float) (enemic.getVelMoviment() * Math.sin(angle));
+
+            // actualitzo la posició de l'enemic   FI
+            enemic.setPosX(enemic.getPosX() + movX);
+            enemic.setPosY(enemic.getPosY() + movY);
+
+
 
         });
 
@@ -146,7 +152,9 @@ public class ServidorThread extends Thread {
 
     private void spawnEnemics() {
 
-        if (enemicsDeLaRonda != null){
+
+
+        if (enemicsDeLaRonda != null) {
 
             // que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
             while (estatJoc.getEnemics().size() < numEnemicsEnArena && enemicsDeLaRonda.size() > 0) {
@@ -164,8 +172,25 @@ public class ServidorThread extends Thread {
             if (tempRondes.haAcabatLespera()) {       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
                 enemicsDeLaRonda = (generaUnaLlistaDEnemics());
             }
-        } else {
-            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1) {
+        }
+
+        // esborro enemics
+        List<Integer> posAesborrar= new ArrayList<>();
+        for (int i = 0; i < estatJoc.getEnemics().size(); i++) {
+            if (!estatJoc.getEnemics().get(i).isViu()) posAesborrar.add(i);
+        }
+
+        for (int i = 0; i < posAesborrar.size(); i++) {
+            try {
+                estatJoc.getEnemics().remove((int) posAesborrar.get(i));
+            }catch(Exception e){}
+        }
+
+        System.out.println("   SERV    " +estatJoc.getEnemics().size());
+        if (enemicsDeLaRonda!=null  && !tempRondes.isOn()){
+
+            if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1 ) {
+                estatJoc.setEnemics(new ArrayList<>());
                 tempRondes.startEspera();
             }
         }
@@ -177,8 +202,8 @@ public class ServidorThread extends Thread {
         int numEnemicsRandom = (int) (Math.random() * 10) + 5;
         List<Enemic> enemicsRandom = new ArrayList<>();
         for (int i = 0; i < numEnemicsRandom; i++) {
-            randomTipus=(int)(Math.random()*3);
-            Enemic e = new Enemic(randomTipus==0 ? Enemic.Tipus.PUMPKIN : randomTipus==1 ? Enemic.Tipus.FLOATING : Enemic.Tipus.BOSS, idsEnemics++);
+            randomTipus = (int) (Math.random() * 3);
+            Enemic e = new Enemic(randomTipus == 0 ? Enemic.Tipus.PUMPKIN : randomTipus == 1 ? Enemic.Tipus.FLOATING : Enemic.Tipus.BOSS, idsEnemics++);
             enemicsRandom.add(e);
         }
         return enemicsRandom;
@@ -197,12 +222,12 @@ public class ServidorThread extends Thread {
 
         actualitzaPlayer(jocRebut);
         actualitzaBales(jocRebut);
+        // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
+        actualitzarEnemics(jocRebut);
         // gestionar i crear olejades d'enemics que surtin en moments i llocs diversos
         generaRondes();
         // spawnejar enemics de forma escalonada a la llista d'enemics del joc,  els va esborrant de la llista del thread.    tot plegat no tinc clar que ho hagi de fer el servidor thread. seria un Thread extern? una classe dedicada a aixó...
         spawnEnemics();
-        // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
-        actualitzarEnemics(jocRebut);
 
         // creem la resposta amb l'objecte joc que hem modificat i que es va modificant constantment amb el que envien la resta de players
         String resposta = json.getJSON(estatJoc);
@@ -211,10 +236,11 @@ public class ServidorThread extends Thread {
         // per monitoritzar el que passa al servidor
         log.add("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
         log.add("o. jug_" + (idPropia + 1) + ": " + resposta);
-
+        /*System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
+        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
+*/
         return resposta;    // retornem el json de l'estat del joc
     }
-
 
 
     private void actualitzaBales(Joc jocRebut) {

@@ -1,4 +1,4 @@
-package com.example.demo2;
+package com.example.demo2.utils;
 
 import java.io.BufferedWriter;
 import java.io.File;

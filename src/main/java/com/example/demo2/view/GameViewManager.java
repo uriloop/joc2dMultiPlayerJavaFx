@@ -1,8 +1,7 @@
 package com.example.demo2.view;
 
-import com.example.demo2.Client;
+import com.example.demo2.conexio.Client;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 

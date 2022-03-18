@@ -1,5 +1,9 @@
 package com.example.demo2;
 
+import com.example.demo2.conexio.Client;
+import com.example.demo2.model.Bala;
+import com.example.demo2.model.Enemic;
+import com.example.demo2.model.Player;
 import com.example.demo2.view.ViewManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -189,15 +193,34 @@ public class TheGameMain extends Application {
                                     client.getJoc().getPlayers().forEach(p -> {
                                         if (p.getId() == this.id) {
                                             p.sumaKill();
+                                            
                                         }
                                     });
                                 }
                                 sprite.setDead(true);
+                                atac.setDead(true);
+                                
                             }
                         }
                     }
                 });
 
+        
+        // actualitzo els estats dead dels enemics
+        
+        sprites().stream().filter(s-> s.getType().equals("enemic"))
+                        .forEach(s-> {
+
+                            for (Enemic e :
+                                    client.getJoc().getEnemics()) {
+                                if (e.getId() == s.getIdSprite()) {
+                                     if (s.isDead()){
+                                         e.setViu(false);
+                                     }
+                                }
+                            }
+                            
+                        });
 
 
 
@@ -410,6 +433,7 @@ public class TheGameMain extends Application {
             });
 
 
+            
 
 
             // mostrem els enemics
@@ -450,7 +474,6 @@ public class TheGameMain extends Application {
             });
 
         }
-
     }
 
 
