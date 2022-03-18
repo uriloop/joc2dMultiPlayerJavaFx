@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
 
 
 public class ServidorThread extends Thread {
@@ -13,15 +16,20 @@ public class ServidorThread extends Thread {
     // Que arranca que???? el servidor va apart, només escolta.
     /*   El servidor arranca el client i el client arranca el game     ?????           */
 
-    JsonClass json;
-    Socket clientSocket = null;
-    BufferedReader in = null;
-    PrintStream out = null;
-    String msgEntrant, msgSortint;
+    private LogPartida log= new LogPartida();
+    private JsonClass json;
+    private  Socket clientSocket = null;
+    private  BufferedReader in = null;
+    private PrintStream out = null;
+    private String msgEntrant, msgSortint;
     boolean acabat;
-    Joc estatJoc;
-    int idPropia;
-    String nick;
+    private Joc estatJoc;
+    private int idPropia;
+    private long idsEnemics=0;
+    private String nick;
+    private TimerRondes tempRondes=new TimerRondes(20000);
+    private List<Enemic> enemicsDeLaRonda;
+    private int numEnemicsEnArena=3;
 
     public ServidorThread(Socket clientSocket, Joc estatJoc, int idPropia) {
         this.idPropia = idPropia;
@@ -41,18 +49,21 @@ public class ServidorThread extends Thread {
 
     @Override
     public void run() {
+        log.add("i. jug_" + (idPropia) + " Conexió establerta");
         System.out.println("i. jug_" + (idPropia) + " Conexió establerta");
+        tempRondes.startEspera();
         try {
             // primer missatge on li passem el num de player per determinar la posició inicial i el color del usuari
             estatJoc.getPlayers().add(new Player(idPropia, 100f, 100f , Player.Direccio.S));
             msgSortint = String.valueOf(idPropia);
             out.println(msgSortint);
             out.flush();
-            System.out.println("o. jug_" + (idPropia) + ": " + msgSortint);
+            log.add("o. jug_" + (idPropia) + ": " + msgSortint);
             //rebem la confirmació del client i
             // enviem el primer json amb tots els players, l'usuari ja sap la seva id així que ja podrà discernir que ha de actualitzar i que no.
             msgEntrant = in.readLine();
-            System.out.println("i. jug_" + (idPropia) + ": " + msgEntrant);
+            log.add("i. jug_" + (idPropia) + ": " + msgEntrant);
+
             if (msgEntrant.equals("Conectat!")) {
                 // akí podriem rebre el nick del jugador per a que tots veiessin el nom dels altres ara tiro milles
                 // TODO posar nick al client per a que el servidor tingui el nom dels clients i poder-los mostrar en un futur
@@ -66,9 +77,16 @@ public class ServidorThread extends Thread {
             // Akí hem de rebre el primer json del client
 
             msgEntrant = in.readLine();
-
             // akí comença la festa dels json
             while (!acabat) {
+                // gestionar i crear olejades d'enemics que surtin en moments i llocs diversos
+                generaRondes();
+                // spawnejar enemics de forma escalonada a la llista d'enemics del joc,  els va esborrant de la llista del thread.    tot plegat no tinc clar que ho hagi de fer el servidor thread. seria un Thread extern? una classe dedicada a aixó...
+                spawnEnemics();
+                // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
+                actualitzarEnemics();
+
+
                 msgSortint = generarResposta(msgEntrant);
                 out.println(msgSortint);
                 out.flush();
@@ -84,6 +102,52 @@ public class ServidorThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void actualitzarEnemics() {
+
+        //TODO next
+
+
+    }
+
+    private void spawnEnemics() {
+
+
+        // una recursivitat per a que spawneji de tal forma que sempre hi hagi X enemics minims en Arena o en joc.
+        if (estatJoc.getEnemics().size()<numEnemicsEnArena&& enemicsDeLaRonda.size()>0){
+            estatJoc.getEnemics().add(enemicsDeLaRonda.get(enemicsDeLaRonda.size()-1));
+            enemicsDeLaRonda.remove(enemicsDeLaRonda.size()-1);
+            spawnEnemics();
+        }
+
+
+    }
+
+    private void generaRondes() {
+        if ( tempRondes.isOn()){
+            if (tempRondes.haAcabatLespera()){       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
+                enemicsDeLaRonda=(generaUnaLlistaDEnemics());
+            }
+
+        }else{
+            if (enemicsDeLaRonda.size()==0){
+                tempRondes.startEspera();
+            }
+        }
+    }
+
+    private List<Enemic> generaUnaLlistaDEnemics() {
+
+        List<Enemic> enemicsRandom= new ArrayList<>();
+        int numEnemicsRandom=(int)(Math.random()*10)+5;
+        for (int i = 0; i < numEnemicsRandom; i++) {
+            Enemic e= new Enemic(Enemic.Tipus.PUMPKIN,idsEnemics);
+            idsEnemics++;
+            enemicsRandom.add(e);
+        }
+        return enemicsRandom;
+
     }
 
 
@@ -103,8 +167,8 @@ public class ServidorThread extends Thread {
 
 
         // per monitoritzar el que passa al servidor
-        System.out.println("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
-        System.out.println("o. jug_" + (idPropia + 1) + ": " + resposta);
+        log.add("i. jug_" + (idPropia + 1) + ": " + msgEntrant);
+        log.add("o. jug_" + (idPropia + 1) + ": " + resposta);
 
         return resposta;    // retornem el json de l'estat del joc
     }

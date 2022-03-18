@@ -2,9 +2,11 @@ package com.example.demo2;
 
 public class Player {
 
-    private float posY, posX;
-    private int id;
-    private boolean mort=false;
+    // Els tinc en protected en comptes de private perque en principi pretenc extendre d'aquesta classe i vull poder modificar aquestes variables
+
+    protected float posY, posX;
+    protected int id;
+    protected boolean mort=false;
 
     public int getId() {
         return id;
@@ -14,7 +16,7 @@ public class Player {
 
     }
 
-    private Direccio direccio;
+    protected Direccio direccio;
 
     public Player(int id, float posY, float posX, Direccio direccio) {
         this.posY = posY;

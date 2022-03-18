@@ -42,7 +42,17 @@ public class Servidor {
             System.out.println();
             System.out.println(" i = msgFromClient     o = msgToClient     > = StatusMsg");
             System.out.println("*********************************************************");
-            System.out.println(">");
+            System.out.println();
+            System.out.print("> Preparant   o==|");
+            for (int i = 0; i < 10; i++) {
+                System.out.print("=");
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                   // no faig res, saltarà i continuarà la conexió
+                }
+            }
+            System.out.println(">        Gooooo!");
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -61,7 +71,8 @@ public class Servidor {
 
                     //esperar connexió del client i llançar thread  // si hi ha 2 clients deixa d'esperar conexions
                     // TODO He de mantenir aqest bucle. Quan caigui un client s'ha de reiniciar per a que torni a escoltar.
-                    System.out.println("> Estic escoltant peticions...");
+                    System.out.println("> Estic escoltant peticions ...");
+                    System.out.println(">");
 
                     clientSocket = serverSocket.accept();
                     //Llançar Thread per establir la comunicació

@@ -28,6 +28,8 @@ public class Client extends Thread {
     TheGameMain gameMain;
     List<Bala> balesAcrear=new ArrayList<>();
 
+    LogPartida log;
+
 
     public Client(String hostname, int port, TheGameMain gameMain) {
         this.hostname = hostname;
@@ -60,8 +62,9 @@ public class Client extends Thread {
 
             // Tractem el primer missatge on rebem la id
             serverData = in.readLine();
-            System.out.println("i. " + serverData);
             this.idPlayer = Integer.parseInt(serverData);
+            log= new LogPartida("info_partida_client",idPlayer);
+            log.add("i. " + serverData);
             // ~enviem el nick~  enviem resposta simple de moment
             // TODO enviar el nick que hauriem d'haver demanat
             request = "Conectat!";
@@ -69,19 +72,20 @@ public class Client extends Thread {
 
             out.println(request);
             out.flush();
-            System.out.println("o. " + request);
+            log.add("o. " + request);
 
             // revem segon missatge amb el json ja. toca iniciar tot:
             // - posar el jugador propi al seu lloc nou
             serverData = in.readLine();
-            System.out.println("i. " + serverData);
+            log.add("i. " + serverData);
 
             joc = json.getObject(serverData);
-
             ready = true;
+            request=json.getJSON(joc);
             // comença la festa dels Json
-            out.println(json.getJSON(joc));
+            out.println(request);
             out.flush();
+            log.add("o. "+request);
             while (continueConnected) {
                 serverData = in.readLine();
 
@@ -89,8 +93,7 @@ public class Client extends Thread {
                 request = getRequest(serverData);
                 //enviament el número i els intents
                 out.println(request);
-                // monitoritzem per veure que tot funciona
-                System.out.println("o. " + request);
+
                 out.flush();
             }
             close(socket);
@@ -120,7 +123,12 @@ public class Client extends Thread {
         String resposta = json.getJSON(joc);
 
         // monitoritzar el que rebem del servidor
+        log.add("i.  " + recivedDataFromServer);
         System.out.println("i.  " + recivedDataFromServer);
+
+        // monitoritzem per veure que tot funciona
+        log.add("o. " + resposta);
+        System.out.println("o. " + resposta);
 
 
         return resposta;  // envio el json amb l'objecte joc
