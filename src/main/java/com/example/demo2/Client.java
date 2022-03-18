@@ -26,7 +26,7 @@ public class Client extends Thread {
     private int idPlayer;
     private boolean ready;
     TheGameMain gameMain;
-    List<Bala> balesAcrear=new ArrayList<>();
+    List<Bala> balesAcrear = new ArrayList<>();
 
     LogPartida log;
 
@@ -63,7 +63,7 @@ public class Client extends Thread {
             // Tractem el primer missatge on rebem la id
             serverData = in.readLine();
             this.idPlayer = Integer.parseInt(serverData);
-            log= new LogPartida("info_partida_client",idPlayer);
+            log = new LogPartida("info_partida_client", idPlayer);
             log.add("i. " + serverData);
             // ~enviem el nick~  enviem resposta simple de moment
             // TODO enviar el nick que hauriem d'haver demanat
@@ -81,11 +81,11 @@ public class Client extends Thread {
 
             joc = json.getObject(serverData);
             ready = true;
-            request=json.getJSON(joc);
+            request = json.getJSON(joc);
             // comença la festa dels Json
             out.println(request);
             out.flush();
-            log.add("o. "+request);
+            log.add("o. " + request);
             while (continueConnected) {
                 serverData = in.readLine();
 
@@ -107,12 +107,12 @@ public class Client extends Thread {
 
     private void esborrarEnemicsMorts() {
 
-        List<Integer> posicionsEnemicsAEliminar= new ArrayList<>();
+        List<Integer> posicionsEnemicsAEliminar = new ArrayList<>();
         for (int i = 0; i < joc.getEnemics().size(); i++) {
             if (!joc.getEnemics().get(i).isViu()) posicionsEnemicsAEliminar.add(i);
         }
         for (int i = 0; i < posicionsEnemicsAEliminar.size(); i++) {
-            joc.getEnemics().remove((int)posicionsEnemicsAEliminar.get(i));
+            joc.getEnemics().remove((int) posicionsEnemicsAEliminar.get(i));
         }
 
     }
@@ -154,8 +154,7 @@ public class Client extends Thread {
 
 
 
-        /*
-                un cop hagi retornat que està mort l'enemic cap al servidor l'esborro i m'estalvio aixó
+        /*       // un cop hagi retornat que està mort l'enemic cap al servidor l'esborro i m'estalvio aixó
 
         // busco enemics que han estat eliminats per el servidor
         List<Integer> posicionsEnemicsAEliminar=  new ArrayList<>();
@@ -171,8 +170,7 @@ public class Client extends Thread {
         // els elimino del joc
         for (int i = posicionsEnemicsAEliminar.size()-1; i >=0 ; i--) {
             joc.getEnemics().remove(posicionsEnemicsAEliminar.get(i));
-        }
-*/
+        }*/
         List<Integer> nousEnemicsPos = new ArrayList<>();
         boolean esta = false;
 
@@ -181,18 +179,19 @@ public class Client extends Thread {
             for (Enemic e : joc.getEnemics()) {
                 if (e.getId() == jocRebut.getEnemics().get(i).getId()) esta = true;
             }
-            if (!esta) nousEnemicsPos.add(i);
-            esta=false;
+            if (!esta && jocRebut.getEnemics().get(i).isViu()) nousEnemicsPos.add(i);
+            esta = false;
         }
 
-        try{
+        try {
 
             // els afegeixo al joc
             for (int i = 0; i < nousEnemicsPos.size(); i++) {
-                joc.getEnemics().add(new Enemic(jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getId(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosY(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosX(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getTipus()));
+                if (jocRebut.getEnemics().get(nousEnemicsPos.get(i)).isViu())
+                    joc.getEnemics().add(new Enemic(jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getId(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosY(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getPosX(), jocRebut.getEnemics().get(nousEnemicsPos.get(i)).getTipus()));
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -204,7 +203,7 @@ public class Client extends Thread {
                     if (e.getId() == e2.getId()) {
                         e.setPosX(e2.getPosX());
                         e.setPosY(e2.getPosY());
-                        if (!e.isViu()||!e2.isViu()){
+                        if (!e.isViu() || !e2.isViu()) {
                             e.setViu(false);
                             e2.setViu(false);
                         }
@@ -212,7 +211,6 @@ public class Client extends Thread {
                 }
             }
         }
-
 
 
     }
@@ -228,7 +226,7 @@ public class Client extends Thread {
                 if (p.getId() == jocRebut.getPlayers().get(i).getId()) esta = true;
             }
             if (!esta) nousPlayersPos.add(i);
-            esta=false;
+            esta = false;
         }
         // els afegeixo al joc
         for (int i = 0; i < nousPlayersPos.size(); i++) {
@@ -243,7 +241,7 @@ public class Client extends Thread {
                         p.setPosX(p2.getPosX());
                         p.setPosY(p2.getPosY());
                         p.setDireccio(p2.getDireccio());
-                        if (p.isMort()||p2.isMort()){
+                        if (p.isMort() || p2.isMort()) {
                             p.setMort(true);
                             p2.setMort(true);
                         }
@@ -316,7 +314,6 @@ public class Client extends Thread {
 
             existeix = false;
         }
-
 
 
     }

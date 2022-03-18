@@ -39,10 +39,13 @@ public class TheGameMain extends Application {
     private boolean carrega;
     private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 80, 150, Player.Direccio.S, 25);
     private List<Sprite> players = new ArrayList<>();
+    private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
     private int id;
     private long idBales = 10;
+    private int numSpriteImage=0;
+    private double ciclesSpritesEnemics;
 
     public List<String> getInput() {
         return input;
@@ -107,6 +110,8 @@ public class TheGameMain extends Application {
 
     private void update() {
 
+
+
         updateEstatJoc();
 
         if (!player1.isDead()) {
@@ -168,6 +173,26 @@ public class TheGameMain extends Application {
                                     atac.setDead(true);
                                 }
 
+                            }
+                        }
+                    }
+                });
+
+        sprites().stream()
+                .filter(sprite -> sprite.getType().equals("atac"))
+                .forEach(atac -> {
+                    for (Sprite sprite :
+                            sprites()) {
+                        if (sprite.getType().equals("enemic")) {
+                            if (atac.getBoundsInParent().intersects(sprite.getBoundsInParent())) {
+                                if (atac.getIdSprite() % 10 == player1.getIdSprite()) {
+                                    client.getJoc().getPlayers().forEach(p -> {
+                                        if (p.getId() == this.id) {
+                                            p.sumaKill();
+                                        }
+                                    });
+                                }
+                                sprite.setDead(true);
                             }
                         }
                     }
@@ -320,6 +345,9 @@ public class TheGameMain extends Application {
         if (client.isReady()) {
             this.id = client.getIdPlayer();
             if (idBales % 10 != id) idBales += id;
+
+
+
             // Aixó m'esborra l'sprite dels altres players per evitar l'estela
             sprites().forEach(sprite -> {
                 if (sprite.getType().equals("players")) {
@@ -327,12 +355,6 @@ public class TheGameMain extends Application {
                 }
             });
 
-            // Com l'anterior pero per les bales     LES BALES ES CREEN UN COP, NO S'ACTUALITZEN, NO VAL CREC
-//            sprites().forEach(sprite -> {
-//                if (sprite.getType().equals("atac")){
-//                    root.getChildren().remove(sprite);
-//                }
-//            });
 
 
             // mostrem els  altres players
@@ -361,7 +383,6 @@ public class TheGameMain extends Application {
 
             });
 
-            // Aixó és una llicencia ràpida que em permeto pero hi ha una clara falla d'encapsulament. les bales a crear hauria de pertanyer a TheGameMain més aviat i que client hi poogués fer modificacions...
             client.balesAcrear = new ArrayList<>();
 
 
@@ -378,6 +399,41 @@ public class TheGameMain extends Application {
                 }
             }
 
+
+
+
+            // esborro els enemics primer
+            sprites().forEach(sprite -> {
+                if (sprite.getType().equals("enemic")) {
+                    root.getChildren().remove(sprite);
+                }
+            });
+
+
+
+
+            // mostrem els enemics
+             enemics = new ArrayList<>();
+            client.getJoc().getEnemics().stream()
+                    .filter(enemic -> enemic.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
+                    .forEach(e -> {
+                        if (e.getId() != id) {
+                            // actualitzem tots els players menys el nostre   // de moment els tornem a crear
+                            Sprite sp=new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
+                            enemics.add(sp);
+                            sp.setImatgeActual(numSpriteImage,e.getTipus());
+                        }
+                    });
+            enemics.forEach(e -> root.getChildren().add(e));
+
+            // moc els sprites dels enemics cada X cicles
+
+            if (cicles-ciclesSpritesEnemics>10){
+                numSpriteImage= numSpriteImage==1 ? 0 : 1;
+                ciclesSpritesEnemics=cicles;
+            }
+
+            // actualitzo l'estat dels enemics per a que ho vegi el servidor
 
         }
 

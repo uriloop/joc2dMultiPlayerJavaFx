@@ -7,6 +7,7 @@ public class Player {
     protected float posY, posX;
     protected int id;
     protected boolean mort=false;
+    private int kills= 0;
 
     public int getId() {
         return id;
@@ -48,11 +49,19 @@ public class Player {
     public void setDireccio(Direccio direccio) {
         this.direccio = direccio;
     }
+
+    public void sumaKill() {
+        this.kills+=1;
+    }
+
     public enum Direccio {
         N, S, E, W;
 
     }
 
+    public int getKills() {
+        return kills;
+    }
 
     public float getPosY() {
         return posY;

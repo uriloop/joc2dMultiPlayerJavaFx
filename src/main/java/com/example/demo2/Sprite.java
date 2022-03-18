@@ -201,4 +201,26 @@ public class Sprite extends Rectangle {
     public void setIdSprite(long id) {
         this.id = id;
     }
+
+    public void setImatgeActual(int imatge, Enemic.Tipus tipus) {
+        Image img = null;
+        if (imatge==0){
+            switch (tipus){
+                case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_1.png")));
+                case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
+                case BOSS -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_boss_1.png")));
+                default -> throw new IllegalStateException("Unexpected value: " + tipus);
+            }
+        }else if (imatge==1){
+            switch (tipus){
+                case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_2.png")));
+                case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
+                case BOSS -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_boss_2.png")));
+                default -> throw new IllegalStateException("Unexpected value: " + tipus);
+            }
+        }
+
+        this.setFill(new ImagePattern(img));
+
+    }
 }

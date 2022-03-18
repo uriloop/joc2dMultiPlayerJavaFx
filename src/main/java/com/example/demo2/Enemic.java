@@ -3,80 +3,105 @@ package com.example.demo2;
 public class Enemic {
 
     float posY, posX;
-    int velMoviment;
+    float velMoviment;
     boolean viu = true;
-    private int width,height;
+    private int width, height;
     private long id;
     private Tipus tipus;
 
     // constructor del client
     public Enemic(long id, float posY, float posX, Tipus tipus) {
-        this.id=id;
-        this.posX=posX;
-        this.posY=posY;
-        this.tipus=tipus;
-        switch (tipus){
-            case BOSS ->  {
-                width=64;
-                height=64;
-                velMoviment=5;
+        this.id = id;
+        this.posX = posX;
+        this.posY = posY;
+        this.tipus = tipus;
+        switch (tipus) {
+            case BOSS -> {
+                width = 64;
+                height = 64;
+                velMoviment = 0.05f;
             }
             case FLOATING -> {
-                width=32;
-                height=32;
-                velMoviment=10;
+                width = 32;
+                height = 32;
+                velMoviment = 0.2f;
 
             }
             case PUMPKIN -> {
-                width=32;
-                height=32;
-                velMoviment=8;
+                width = 32;
+                height = 32;
+                velMoviment = 0.1f;
             }
             default -> throw new IllegalStateException("Unexpected value: " + tipus);
         }
 
     }
 
-    public enum Tipus{
+    public enum Tipus {
         PUMPKIN, FLOATING, BOSS;
+
+        public Tipus getTipus(int num){
+            switch (num){
+                case 0 -> {
+                    return PUMPKIN;
+                }
+                case 1 -> {
+                    return FLOATING;
+                }
+                case  2 -> {
+                    return BOSS;
+                }
+
+            }
+            return PUMPKIN;
+        }
     }
 
     public Enemic() {
     }
 
     public Enemic(Tipus tipus, long id) {
-        this.tipus=tipus;
-        this.id=id;
-        switch (tipus){
-            case BOSS ->  {
-                width=64;
-                height=64;
-                posX=600-width;
-                posY=0;
-                velMoviment=5;
+        this.tipus = tipus;
+        this.id = id;
+        switch (tipus) {
+            case BOSS -> {
+                width = 64;
+                height = 64;
+                posX = 600 - width;
+                posY = 0;
+                velMoviment = 0.05f;
             }
             case FLOATING -> {
-                width=32;
-                height=32;
+                width = 64;
+                height = 64;
                 setRandomPosition();
-                velMoviment=10;
-
+                velMoviment = 0.2f;
             }
             case PUMPKIN -> {
-                width=32;
-                height=32;
+                width = 64;
+                height = 64;
                 setRandomPosition();
-                velMoviment=8;
-
+                velMoviment = 0.1f;
             }
             default -> throw new IllegalStateException("Unexpected value: " + tipus);
         }
     }
+
     private void setRandomPosition() {
         //   vull que vinguin desde la part superior per no complicar i que vagin tots en direcció a algo que han de protegir per no liar, més endavant posaria que es dirigeixin a l'enemic més proper o que fixin un objectiu...
         // Random entre 0 i el viewPortX-(int)widthEnemic
-        posY=0;
-        posX= (float) (Math.random()*(1200-width))+1;
+        int posRandom = (int) (Math.random() * (1600));
+        if (posRandom < 200) {
+            posX = 0-width;
+            posY = posRandom;
+        } else if (posRandom > 1400) {
+            posX = 1200;
+            posY = posRandom-1400;
+        } else {
+            posX= posRandom-200;
+            posY= 0-height;
+        }
+
     }
 
     public float getPosY() {
@@ -87,7 +112,7 @@ public class Enemic {
         this.posY = posY;
     }
 
-    public int getVelMoviment() {
+    public float getVelMoviment() {
         return velMoviment;
     }
 
@@ -114,7 +139,6 @@ public class Enemic {
     public long getId() {
         return id;
     }
-
 
 
     public int getHeight() {

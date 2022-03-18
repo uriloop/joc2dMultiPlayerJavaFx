@@ -79,12 +79,6 @@ public class ServidorThread extends Thread {
             msgEntrant = in.readLine();
             // akí comença la festa dels json
             while (!acabat) {
-                // gestionar i crear olejades d'enemics que surtin en moments i llocs diversos
-                generaRondes();
-                // spawnejar enemics de forma escalonada a la llista d'enemics del joc,  els va esborrant de la llista del thread.    tot plegat no tinc clar que ho hagi de fer el servidor thread. seria un Thread extern? una classe dedicada a aixó...
-                spawnEnemics();
-                // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
-                actualitzarEnemics();
 
 
                 msgSortint = generarResposta(msgEntrant);
@@ -104,8 +98,23 @@ public class ServidorThread extends Thread {
         }
     }
 
-    private void actualitzarEnemics() {
+    private void actualitzarEnemics(Joc jocRebut) {
 
+        // busco els enemics morts per esborrar-los
+
+        jocRebut.getEnemics().stream().filter(en-> !en.isViu())
+                .forEach(enemic -> {
+                    for (Enemic e :
+                            estatJoc.getEnemics()) {
+                        if (enemic.getId()==e.getId()){
+                            e.setViu(false);
+                        }
+                    }
+                });
+
+
+
+        // Actualitzo moviment
         estatJoc.getEnemics().forEach(enemic -> {
 
             // he de crear una diagonal fins l'objecte que volen atacar. bottom-center
@@ -115,8 +124,8 @@ public class ServidorThread extends Thread {
             // valors que vull:  posXdespresDelMoviment   posYdespresDelMoviment
             // Math.atan2(by-ay, bx-ax);     A: enemic    B: objectiu    (tinc el dubte de si tindrà negatiu i positiu... tenir-ho en compte si dona POSSIBLE ERROR BUSCA AKI)
 
-            if (enemic.getPosY() < 750) {
-                double angle = Math.atan2(790 - enemic.getPosY(), 600 - enemic.getPosX());
+            if (enemic.isViu()) {
+                double angle = Math.atan2(700 - enemic.getPosY(), 600 - enemic.getPosX());
 
                 // gracies! https://www.profesorenlinea.cl/fisica/Fuerzas_descomposicion.html i  https://codigo--java.blogspot.com/2013/06/java-basico-046-funcion-calculando-seno.html
                 // Fx = F• cos α  ,  Fy = F• sen α  o en java    movX = velMoviment * cos angle;
@@ -164,11 +173,12 @@ public class ServidorThread extends Thread {
 
     private List<Enemic> generaUnaLlistaDEnemics() {
 
-        List<Enemic> enemicsRandom = new ArrayList<>();
+        int randomTipus;
         int numEnemicsRandom = (int) (Math.random() * 10) + 5;
+        List<Enemic> enemicsRandom = new ArrayList<>();
         for (int i = 0; i < numEnemicsRandom; i++) {
-            Enemic e = new Enemic(Enemic.Tipus.PUMPKIN, idsEnemics++);
-
+            randomTipus=(int)(Math.random()*3);
+            Enemic e = new Enemic(randomTipus==0 ? Enemic.Tipus.PUMPKIN : randomTipus==1 ? Enemic.Tipus.FLOATING : Enemic.Tipus.BOSS, idsEnemics++);
             enemicsRandom.add(e);
         }
         return enemicsRandom;
@@ -184,8 +194,15 @@ public class ServidorThread extends Thread {
         Joc jocRebut = json.getObject(msgEntrant);
 
         // actualitzem el joc:      player   i   bales
+
         actualitzaPlayer(jocRebut);
         actualitzaBales(jocRebut);
+        // gestionar i crear olejades d'enemics que surtin en moments i llocs diversos
+        generaRondes();
+        // spawnejar enemics de forma escalonada a la llista d'enemics del joc,  els va esborrant de la llista del thread.    tot plegat no tinc clar que ho hagi de fer el servidor thread. seria un Thread extern? una classe dedicada a aixó...
+        spawnEnemics();
+        // els enemics els he d'actualitzar desde el servidor també...? Si vull implementar-lis moviments extranys si. si simplement tots van cap a un punt no caldria.  (com la feina és la mateixa exactament, ho implemento akí, que em dona més joc en un futur.)
+        actualitzarEnemics(jocRebut);
 
         // creem la resposta amb l'objecte joc que hem modificat i que es va modificant constantment amb el que envien la resta de players
         String resposta = json.getJSON(estatJoc);
@@ -197,6 +214,8 @@ public class ServidorThread extends Thread {
 
         return resposta;    // retornem el json de l'estat del joc
     }
+
+
 
     private void actualitzaBales(Joc jocRebut) {
 
