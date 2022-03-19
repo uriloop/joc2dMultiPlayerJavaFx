@@ -7,26 +7,34 @@ import com.example.demo2.model.Player;
 import com.example.demo2.view.ViewManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class TheGameMain extends Application {
 
     private double cicles = 0;
 
-    ///////////7
-
     private Client client;
 
-    /////////////777
 
     private float viewPortX = 1200;
     private float viewPortY = 800;
@@ -36,7 +44,6 @@ public class TheGameMain extends Application {
 
     private Stage mainStage;
     private Scene mainScene;
-
     private String ip;
     private Pane root = new Pane();
     private int margeJugadors = 25;
@@ -44,12 +51,15 @@ public class TheGameMain extends Application {
     private final Sprite castell = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2)-125, (int) (viewPortY - 150), 250, 180, Player.Direccio.S, 25);
     private List<Sprite> players = new ArrayList<>();
     private List<Sprite> enemics = new ArrayList<>();
-
     private List<String> input = new ArrayList<>();
     private int id;
     private long idBales = 10;
     private int numSpriteImage = 0;
     private double ciclesSpritesEnemics;
+    private int vidaCastell;
+    private String rondaLabelID;
+    private Sprite rondaSprite = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2)-125, 150, 250, 180, Player.Direccio.S, 25);
+
 
     public List<String> getInput() {
         return input;
@@ -82,6 +92,8 @@ public class TheGameMain extends Application {
     public Pane getRoot() {
         return root;
     }
+    private AudioClip acHit;
+    private AudioClip acDead;
 
     private void createBackground() {
         Image backgroundImage = new Image("background_grass.png", 1200, 800, false, true);
@@ -92,9 +104,13 @@ public class TheGameMain extends Application {
     public Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
         createBackground();
+        String path = getClass().getResource("/small_hit_sound.wav").toString();
+        acHit=new AudioClip(path);
+         path = getClass().getResource("/enemy_dead_sound.wav").toString();
+        acDead=new AudioClip(path);
         root.getChildren().add(player1);
-
-
+        root.getChildren().add(castell);
+    music();
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
@@ -196,6 +212,7 @@ public class TheGameMain extends Application {
                                 }
                                 sprite.setDead(true);
                                 atac.setDead(true);
+                                acDead.play();
 
                             }
                         }
@@ -361,6 +378,7 @@ public class TheGameMain extends Application {
                     client.getJoc().getBales().add(new Bala(idBales, (float) sp.getTranslateX(), (float) sp.getTranslateY(), sp.getDireccio()));
                     root.getChildren().add(sp);
                     idBales += 10;
+                    acHit.play();
                 }
 
             }
@@ -409,6 +427,7 @@ public class TheGameMain extends Application {
                             Sprite sp = new Sprite(p.getId(), "players", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 80, 150, p.getDireccio(), 25);
                             players.add(sp);
                             sp.setImatgeActual(p.getDireccio());
+
                         }
                     });
             players.forEach(e -> root.getChildren().add(e));
@@ -424,6 +443,16 @@ public class TheGameMain extends Application {
                 root.getChildren().add(sp);
 
             });
+
+            if (this.vidaCastell>client.getJoc().getVidaCastell()) {
+                client.getJoc().setVidaCastell(this.vidaCastell);
+                updateCastell();
+
+            }else if (this.vidaCastell<client.getJoc().getVidaCastell()){
+                this.vidaCastell=client.getJoc().getVidaCastell();
+                updateCastell();
+
+            }
 
             client.balesAcrear = new ArrayList<>();
 
@@ -443,8 +472,7 @@ public class TheGameMain extends Application {
 
             updateFight();
 
-            updateCastell();
-
+            updateRonda();
 
             // esborro els enemics primer
             sprites().forEach(sprite -> {
@@ -466,7 +494,7 @@ public class TheGameMain extends Application {
                             sp.setImatgeActual(numSpriteImage, e.getTipus());
 
                         } catch (Exception exc) {
-                            System.out.println(" segons sembla estic modificant un valor d'una llista sobre la que estic reiterant i no està permés pero crec que no ho estic fent."); // No afecta a res sembla ser...  A les males em guardo les poosicions en una llista i despres reitero sobre la llista per fer els cambis
+                            // segons sembla estic modificant un valor d'una llista sobre la que estic reiterant i no està permés pero crec que no ho estic fent."); // No afecta a res sembla ser...  A les males em guardo les poosicions en una llista i despres reitero sobre la llista per fer els cambis
                         }
                     });
 
@@ -500,18 +528,21 @@ public class TheGameMain extends Application {
         }
     }
 
+    private void updateRonda() {
+        rondaSprite.setLabel(client.getJoc().getRonda());
+    }
+
     private void updateCastell() {
 
 
-        sprites().forEach(sprite -> {
+    /*    sprites().forEach(sprite -> {
             if (sprite.getType().equals("castell")) {
                 root.getChildren().remove(sprite);
             }
-        });
-        Sprite sp = null;
-        sp = castell;
-        sp.setImatgeCastell(client.getJoc().getVidaCastell());
-        root.getChildren().add(castell);
+        });*/
+
+        castell.setImatgeCastell(client.getJoc().getVidaCastell());
+
 
     }
 
@@ -540,6 +571,7 @@ public class TheGameMain extends Application {
         ViewManager viewManager = new ViewManager(this);
         stage = viewManager.getMainStage();
 
+
         // posem a escoltar diferents tecles per als inputs
 
         viewManager.getMainScene().setOnKeyPressed(e -> {
@@ -547,6 +579,16 @@ public class TheGameMain extends Application {
         });
         stage.show();
 
+
+    }
+
+    MediaPlayer mediaPlayer;
+
+    private void music() {
+        String path = getClass().getResource("/background_music.mp3").toString();
+        Media media = new Media(path);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
 
     }
 

@@ -69,7 +69,18 @@ public class Joc implements Serializable {
         return this.vidaCastell;
     }
 
-    /*
+    public void setVidaCastell(int vidaCastell) {
+        this.vidaCastell=vidaCastell;
+    }
+
+    public long getRonda() {
+        return ronda;
+    }
+
+    public void setRonda(long ronda) {
+        this.ronda = ronda;
+    }
+/*
         Amb el fightOn sabem si estem al temps de descans o enmig d'una oleada:
         El servidor inicia el temps de descans quan li arriba que ja no queden enemics.
         Quan el temps finalitza el servidor posa el fightOn a true i envia una nova ronda d'enemics

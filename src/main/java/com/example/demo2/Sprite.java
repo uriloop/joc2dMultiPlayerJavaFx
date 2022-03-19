@@ -2,10 +2,12 @@ package com.example.demo2;
 
 import com.example.demo2.model.Enemic;
 import com.example.demo2.model.Player;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 
 public class Sprite extends Rectangle {
 
@@ -269,6 +271,19 @@ public class Sprite extends Rectangle {
 
         }
         this.setFill(new ImagePattern(img));
+
+    }
+
+    public void setLabel(long ronda) {
+        Label label = new Label();
+        label.setText("Ronda: 1");
+        label.setLayoutY(getTranslateY());
+        label.setLayoutX(getTranslateX());
+        label.setPrefWidth(getWidth());
+        label.setPrefHeight(getHeight());
+        label.setFont(Font.font("Verdana",35));
+        label.setVisible(true);
+
 
     }
 }
