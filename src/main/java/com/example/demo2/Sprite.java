@@ -18,6 +18,38 @@ public class Sprite extends Rectangle {
     private long id;
     private String imatgeActual;
 
+    // constructor basicament per les bales
+    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
+        super(w, h, color);
+        this.direccio = direccio;
+        this.id = id;
+        this.type = type;
+        setTranslateX(x);
+        setTranslateY(y);
+    }
+
+    // Constructor per especificar la velocitat de moviment  -per al player-
+    public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+        super(w, h, color);
+        this.direccio = direccio;
+        this.type = type;
+        this.velMoviment = velocitat;
+        setTranslateX(x);
+        setTranslateY(y);
+        this.id = -1;
+    }
+
+    // Aquest per als enemics que necessito la seva id de sprite per identificar-los
+    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
+        super(w, h, color);
+        this.direccio = direccio;
+        this.id = id;
+        this.type = type;
+        this.velMoviment = velocitat;
+        setTranslateX(x);
+        setTranslateY(y);
+    }
+
 /*
     public Sprite(String type, Color color, int x, int y, int w, int h) {
         super(w,h,color);
@@ -80,37 +112,6 @@ public class Sprite extends Rectangle {
 
 
 
-    // constructor basicament per les bales
-    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
-        super(w, h, color);
-        this.direccio = direccio;
-        this.id = id;
-        this.type = type;
-        setTranslateX(x);
-        setTranslateY(y);
-    }
-
-    // Constructor per especificar la velocitat de moviment  -per al player-
-    public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
-        super(w, h, color);
-        this.direccio = direccio;
-        this.type = type;
-        this.velMoviment = velocitat;
-        setTranslateX(x);
-        setTranslateY(y);
-        this.id = -1;
-    }
-
-    // Aquest per als enemics que necessito la seva id de sprite per identificar-los
-    public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
-        super(w, h, color);
-        this.direccio = direccio;
-        this.id = id;
-        this.type = type;
-        this.velMoviment = velocitat;
-        setTranslateX(x);
-        setTranslateY(y);
-    }
 
     public void moveRight() {
         setTranslateX(getTranslateX() + velMoviment);
@@ -206,12 +207,15 @@ public class Sprite extends Rectangle {
         this.id = id;
     }
 
+
+
     public void setImatgeActual(int imatge, Enemic.Tipus tipus) {
         Image img = null;
         if (imatge==0){
             switch (tipus){
                 case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_1.png")));
                 case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
+                case GHOST -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_ghost_1.png")));
                 case BOSS -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_boss_1.png")));
                 default -> throw new IllegalStateException("Unexpected value: " + tipus);
             }
@@ -219,11 +223,51 @@ public class Sprite extends Rectangle {
             switch (tipus){
                 case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_2.png")));
                 case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
+                case GHOST -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_ghost_2.png")));
                 case BOSS -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_boss_2.png")));
                 default -> throw new IllegalStateException("Unexpected value: " + tipus);
             }
         }
 
+        this.setFill(new ImagePattern(img));
+
+    }
+
+    public void setImatgeActualFight(String estatOlejades) {
+        Image img = null;
+        if (estatOlejades.equals("wait")){
+         img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("waiting_2.png")));
+
+        }else {
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("fight_1.png")));
+
+        }
+
+        this.setFill(new ImagePattern(img));
+
+    }
+
+    public void setImatgeCastell(int vidaCastell) {
+
+        Image img = null;
+
+        if (vidaCastell>80){
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
+
+        }else if (vidaCastell>60){
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
+
+        }else if (vidaCastell>40){
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
+
+        }else if (vidaCastell>20){
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
+
+        }else{
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
+
+
+        }
         this.setFill(new ImagePattern(img));
 
     }

@@ -141,11 +141,14 @@ public class Client extends Thread {
         // actualitzem els enemics al nostre joc
         actualitzaEnemics(jocRebut);
 
+        // actualitzem estat del joc: fight or waiting
+        actualitzaFight(jocRebut);
+
         String resposta = json.getJSON(joc);
 
         // monitoritzar el que rebem del servidor
         log.add("i.  " + recivedDataFromServer);
-       // System.out.println("i.  " + recivedDataFromServer);
+        // System.out.println("i.  " + recivedDataFromServer);
 
         // monitoritzem per veure que tot funciona
         log.add("o. " + resposta);
@@ -153,6 +156,17 @@ public class Client extends Thread {
 
         return resposta;  // envio el json amb l'objecte joc
 
+
+    }
+
+    /**
+     * Actualitza l'estat del joc pel que fa a si estem en una olejada activa o estem en el periode de descans entre olejades
+     *
+     * @param jocRebut el joc que rebem del servidor
+     */
+    private void actualitzaFight(Joc jocRebut) {
+
+        joc.setFight(jocRebut.isFight());
 
     }
 
@@ -214,13 +228,13 @@ public class Client extends Thread {
             }
         }
 
-        List<Integer> posAesborrar= new ArrayList<>();
+        List<Integer> posAesborrar = new ArrayList<>();
 
         for (int j = 0; j < jocRebut.getEnemics().size(); j++) {
-            if (!jocRebut.getEnemics().get(j).isViu()){
+            if (!jocRebut.getEnemics().get(j).isViu()) {
                 for (Enemic enemic :
                         joc.getEnemics()) {
-                    if (jocRebut.getEnemics().get(j).getId() == enemic.getId()){
+                    if (jocRebut.getEnemics().get(j).getId() == enemic.getId()) {
                         jocRebut.getEnemics().get(j).setViu(false);
                         enemic.setViu(false);
                         posAesborrar.add(j);
@@ -233,7 +247,10 @@ public class Client extends Thread {
 
 
         for (int i = 0; i < posAesborrar.size(); i++) {
-            joc.getEnemics().remove((int)posAesborrar.get(i));
+            try {
+                joc.getEnemics().remove((int) posAesborrar.get(i));
+            } catch (Exception e) {
+            }
         }
     }
 

@@ -13,7 +13,9 @@ public class Joc implements Serializable {
 
     private List<Bala> bales = new ArrayList<>();
 
-
+    private boolean fight=false;
+    private long ronda=0;
+    private int vidaCastell=100;
 
 
     // private boolean fightOn;
@@ -49,6 +51,22 @@ public class Joc implements Serializable {
 
     public void setEnemics(List<Enemic> enemics) {
         this.enemics = enemics;
+    }
+
+    public boolean isFight() {
+        return fight;
+    }
+
+    public void setFight(boolean fight) {
+        this.fight = fight;
+    }
+
+    public void sumaRonda() {
+        this.ronda++;
+    }
+
+    public int getVidaCastell() {
+        return this.vidaCastell;
     }
 
     /*

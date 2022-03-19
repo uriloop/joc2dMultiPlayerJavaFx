@@ -27,6 +27,11 @@ public class Enemic {
                 velMoviment = 0.2f;
 
             }
+            case GHOST -> {
+                width = 64;
+                height = 64;
+                velMoviment = 0.15f;
+            }
             case PUMPKIN -> {
                 width = 64;
                 height = 64;
@@ -38,7 +43,7 @@ public class Enemic {
     }
 
     public enum Tipus {
-        PUMPKIN, FLOATING, BOSS;
+        PUMPKIN, FLOATING, GHOST, BOSS;
 
         public Tipus getTipus(int num){
             switch (num){
@@ -49,6 +54,9 @@ public class Enemic {
                     return FLOATING;
                 }
                 case  2 -> {
+                    return GHOST;
+                }
+                case 3 -> {
                     return BOSS;
                 }
 
@@ -76,6 +84,12 @@ public class Enemic {
                 height = 64;
                 setRandomPosition();
                 velMoviment = 0.2f;
+            }
+            case GHOST -> {
+                width = 64;
+                height = 64;
+                setRandomPosition();
+                velMoviment = 0.15f;
             }
             case PUMPKIN -> {
                 width = 64;

@@ -31,7 +31,7 @@ public class TheGameMain extends Application {
     private float viewPortX = 1200;
     private float viewPortY = 800;
 
-    private final static String OTHER_PLAYER_IMAGE = "/resources/deep_blue.png";
+    private final static String CASTTLE_IMAGE = "/resources/deep_blue.png";
 
 
     private Stage mainStage;
@@ -40,15 +40,15 @@ public class TheGameMain extends Application {
     private String ip;
     private Pane root = new Pane();
     private int margeJugadors = 25;
-    private boolean carrega;
-    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN,(int)(viewPortX/2),(int)( viewPortY-50), 80, 150, Player.Direccio.S, 25);
+    private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN, (int) (viewPortX / 2), (int) (viewPortY - 50), 80, 150, Player.Direccio.S, 25);
+    private final Sprite castell = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2)-125, (int) (viewPortY - 150), 250, 180, Player.Direccio.S, 25);
     private List<Sprite> players = new ArrayList<>();
     private List<Sprite> enemics = new ArrayList<>();
 
     private List<String> input = new ArrayList<>();
     private int id;
     private long idBales = 10;
-    private int numSpriteImage=0;
+    private int numSpriteImage = 0;
     private double ciclesSpritesEnemics;
 
     public List<String> getInput() {
@@ -83,9 +83,9 @@ public class TheGameMain extends Application {
         return root;
     }
 
-    private void createBackground(){
-        Image backgroundImage = new Image("background_grass.png",1200,800,false,true);
-        BackgroundImage background= new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,null);
+    private void createBackground() {
+        Image backgroundImage = new Image("background_grass.png", 1200, 800, false, true);
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         root.setBackground(new Background(background));
     }
 
@@ -110,10 +110,7 @@ public class TheGameMain extends Application {
     double ciclesMov = cicles;
 
 
-
-
     private void update() {
-
 
 
         updateEstatJoc();
@@ -172,7 +169,7 @@ public class TheGameMain extends Application {
                             }
                         } else if (players.getType().equals("player")) {
                             if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
-                                if (atac.getIdSprite() % 10 != id){
+                                if (atac.getIdSprite() % 10 != id) {
                                     players.setDead(true);
                                     atac.setDead(true);
                                 }
@@ -193,35 +190,34 @@ public class TheGameMain extends Application {
                                     client.getJoc().getPlayers().forEach(p -> {
                                         if (p.getId() == this.id) {
                                             p.sumaKill();
-                                            
+
                                         }
                                     });
                                 }
                                 sprite.setDead(true);
                                 atac.setDead(true);
-                                
+
                             }
                         }
                     }
                 });
 
-        
+
         // actualitzo els estats dead dels enemics
-        
-        sprites().stream().filter(s-> s.getType().equals("enemic"))
-                        .forEach(s-> {
 
-                            for (Enemic e :
-                                    client.getJoc().getEnemics()) {
-                                if (e.getId() == s.getIdSprite()) {
-                                     if (s.isDead()){
-                                         e.setViu(false);
-                                     }
-                                }
+        sprites().stream().filter(s -> s.getType().equals("enemic"))
+                .forEach(s -> {
+
+                    for (Enemic e :
+                            client.getJoc().getEnemics()) {
+                        if (e.getId() == s.getIdSprite()) {
+                            if (s.isDead()) {
+                                e.setViu(false);
                             }
-                            
-                        });
+                        }
+                    }
 
+                });
 
 
         // eliminar atacs que han sortit del joc per cada costat de la pantalla :  només els poso a DEAD=true;
@@ -240,6 +236,30 @@ public class TheGameMain extends Application {
             }
         });
         cicles++;
+    }
+
+    /**
+     * S'encarrega de comprovar si estem en espera o ja arriba una olejada d'enemics (fight) i mostra el text corresponent
+     */
+    private void updateFight() {
+
+        int w = 80, h = 50;
+        float posX = viewPortX / 2, posY = 100;
+        sprites().forEach(sprite -> {
+            if (sprite.getType().equals("fight")) {
+                root.getChildren().remove(sprite);
+            }
+        });
+        Sprite sp = null;
+        if (client.getJoc().isFight()) {
+            sp = new Sprite("fight", Color.AQUA, w, h, (int) posX, (int) posY, Player.Direccio.S, 0);
+            sp.setImatgeActualFight("fight");
+        } else {
+            sp = new Sprite("fight", Color.AQUA, w, h, (int) posX, (int) posY, Player.Direccio.S, 0);
+            sp.setImatgeActualFight("wait");
+
+        }
+        root.getChildren().add(sp);
     }
 
     private void actualitzaPlayer() {
@@ -358,7 +378,7 @@ public class TheGameMain extends Application {
         // mirar el joc i per cada player del servidor, és a dir tots menys el meu player
 
         if (client == null) {
-          //  client = new Client("localhost", 5555, this);
+            //  client = new Client("localhost", 5555, this);
             client = new Client(ip, 5555, this);
 
             client.start();
@@ -366,9 +386,9 @@ public class TheGameMain extends Application {
         // akí posem el ready.
 
         if (client.isReady()) {
+
             this.id = client.getIdPlayer();
             if (idBales % 10 != id) idBales += id;
-
 
 
             // Aixó m'esborra l'sprite dels altres players per evitar l'estela
@@ -379,7 +399,6 @@ public class TheGameMain extends Application {
             });
 
 
-
             // mostrem els  altres players
             players = new ArrayList<>();
             client.getJoc().getPlayers().stream()
@@ -387,7 +406,7 @@ public class TheGameMain extends Application {
                     .forEach(p -> {
                         if (p.getId() != id) {
                             // actualitzem tots els players menys el nostre   // de moment els tornem a crear
-                            Sprite sp=new Sprite(p.getId(), "players", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 80, 150, p.getDireccio(), 25);
+                            Sprite sp = new Sprite(p.getId(), "players", Color.DARKGREEN, (int) p.getPosX(), (int) p.getPosY(), 80, 150, p.getDireccio(), 25);
                             players.add(sp);
                             sp.setImatgeActual(p.getDireccio());
                         }
@@ -401,7 +420,7 @@ public class TheGameMain extends Application {
             client.getBalesAcrear().forEach(bala -> {
                 Sprite sp = new Sprite(bala.getIdBala(), "atac", Color.RED, (int) (bala.getPosX()),
                         (int) (bala.getPosY()),
-                        bala.getDir()== Player.Direccio.S||bala.getDir()== Player.Direccio.N ? atacH: atacW, bala.getDir()== Player.Direccio.S||bala.getDir()== Player.Direccio.N ? atacW: atacH, bala.getDir());
+                        bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacH : atacW, bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacW : atacH, bala.getDir());
                 root.getChildren().add(sp);
 
             });
@@ -422,7 +441,9 @@ public class TheGameMain extends Application {
                 }
             }
 
+            updateFight();
 
+            updateCastell();
 
 
             // esborro els enemics primer
@@ -433,51 +454,65 @@ public class TheGameMain extends Application {
             });
 
 
-            
-
-
             // mostrem els enemics
-             enemics = new ArrayList<>();
+            enemics = new ArrayList<>();
 
             client.getJoc().getEnemics().stream()
-                    .filter(en-> en.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
+                    .filter(en -> en.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
                     .forEach(e -> {
-                        try {
-                            Sprite sp=new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
+                        try {  // Aquest try no fa res ja
+                            Sprite sp = new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
                             enemics.add(sp);
-                            sp.setImatgeActual(numSpriteImage,e.getTipus());
+                            sp.setImatgeActual(numSpriteImage, e.getTipus());
 
-                        }catch (Exception exc){
+                        } catch (Exception exc) {
                             System.out.println(" segons sembla estic modificant un valor d'una llista sobre la que estic reiterant i no està permés pero crec que no ho estic fent."); // No afecta a res sembla ser...  A les males em guardo les poosicions en una llista i despres reitero sobre la llista per fer els cambis
                         }
                     });
+
             enemics.forEach(e -> root.getChildren().add(e));
 
             // moc els sprites dels enemics cada X cicles
 
-            if (cicles-ciclesSpritesEnemics>30){
-                numSpriteImage= numSpriteImage==1 ? 0 : 1;
-                ciclesSpritesEnemics=cicles;
+            if (cicles - ciclesSpritesEnemics > 30) {
+                numSpriteImage = numSpriteImage == 1 ? 0 : 1;
+                ciclesSpritesEnemics = cicles;
             }
 
 
             // actualitzo l'estat dels enemics per a que ho vegi el servidor
 
-            enemics.forEach(e-> {
+            enemics.forEach(e -> {
                 for (Enemic en :
                         client.getJoc().getEnemics()) {
                     if (e.getIdSprite() == en.getId()) {
-                        if (e.isDead()|| !en.isViu()){
+                        if (e.isDead() || !en.isViu()) {
                             e.setDead(true);
                             en.setViu(false);
                         }
 
 
                     }
-                };
+                }
             });
 
+
         }
+    }
+
+    private void updateCastell() {
+
+
+        sprites().forEach(sprite -> {
+            if (sprite.getType().equals("castell")) {
+                root.getChildren().remove(sprite);
+            }
+        });
+        Sprite sp = null;
+        sp = castell;
+        sp.setImatgeCastell(client.getJoc().getVidaCastell());
+        root.getChildren().add(castell);
+
     }
 
 
@@ -502,8 +537,8 @@ public class TheGameMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        ViewManager viewManager= new ViewManager(this);
-        stage = viewManager.getMainStage() ;
+        ViewManager viewManager = new ViewManager(this);
+        stage = viewManager.getMainStage();
 
         // posem a escoltar diferents tecles per als inputs
 

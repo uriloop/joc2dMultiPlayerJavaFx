@@ -181,6 +181,7 @@ public class ServidorThread extends Thread {
         if (tempRondes.isOn()) {
             if (tempRondes.haAcabatLespera()) {       /* ho poso en dos ifs ja que el segon mètode modifica el resultat del primer metode i vull limitar conflictes */
                 enemicsDeLaRonda = (generaUnaLlistaDEnemics());
+                estatJoc.setFight(true);
             }
         }
 
@@ -193,11 +194,17 @@ public class ServidorThread extends Thread {
                 estatJoc.getEnemics().removeAll(estatJoc.getEnemics());
                 tempRondes.startEspera();
                 ronda++;
+                estatJoc.sumaRonda();
+                estatJoc.setFight(false);
+
             }
             if (enemicsDeLaRonda.size() == 0 && estatJoc.getEnemics().size() < 1 && ronda>0) {
 
                 estatJoc.getEnemics().removeAll(estatJoc.getEnemics());
                 tempRondes.startEspera();
+                estatJoc.setFight(false);
+                ronda++;
+                estatJoc.sumaRonda();
 
             }
         }
@@ -209,8 +216,8 @@ public class ServidorThread extends Thread {
         int numEnemicsRandom = (int) (Math.random() * 10) + 5;
         List<Enemic> enemicsRandom = new ArrayList<>();
         for (int i = 0; i < numEnemicsRandom; i++) {
-            randomTipus = (int) (Math.random() * 3);
-            Enemic e = new Enemic(randomTipus == 0 ? Enemic.Tipus.PUMPKIN : randomTipus == 1 ? Enemic.Tipus.FLOATING : Enemic.Tipus.BOSS, idsEnemics++);
+            randomTipus = (int) (Math.random() * 4);
+            Enemic e = new Enemic(randomTipus == 0 ? Enemic.Tipus.PUMPKIN : randomTipus == 1 ? Enemic.Tipus.FLOATING : randomTipus == 2 ? Enemic.Tipus.GHOST : Enemic.Tipus.BOSS, idsEnemics++);
             enemicsRandom.add(e);
         }
         return enemicsRandom;
