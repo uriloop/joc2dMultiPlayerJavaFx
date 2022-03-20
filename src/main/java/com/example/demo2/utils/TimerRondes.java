@@ -1,5 +1,8 @@
 package com.example.demo2.utils;
 
+/**
+ * Classe temporitzador
+ */
 public class TimerRondes {
 
 
@@ -13,6 +16,9 @@ public class TimerRondes {
     long tempsEspera, tempsGuardat;
 
 
+    /**
+     * Inicia el temporitzador
+     */
     public void startEspera() {
         tempsGuardat=System.currentTimeMillis();
         on=true;
@@ -26,6 +32,9 @@ public class TimerRondes {
         this.tempsEspera = tempsEspera;
     }
 
+    /**
+     * @return retorna true si ha acabat l'espera i apaga el temporitzador
+     */
     public boolean haAcabatLespera() {
         System.out.println();
         if (System.currentTimeMillis()-tempsGuardat<tempsEspera) return false;
@@ -35,6 +44,9 @@ public class TimerRondes {
 
     }
 
+    /**
+     * @return getter per saber si el temporitzador esta actiu
+     */
     public boolean isOn() {
         return on;
     }

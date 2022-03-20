@@ -14,6 +14,9 @@ import javafx.scene.text.Font;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Gestiona els botons
+ */
 public class Boto extends Button {
 
     private final String FONT_PATH= "src/main/resources/retrolab_400.otf";
@@ -48,14 +51,25 @@ public class Boto extends Button {
 
 
     }
+
+    /**
+     * Li dona estil al boto quan el pulsem
+     */
     private void setButtonPressed(){
         setStyle(BUTTON_ON_STYLE);
 
     }
+
+    /**
+     * Posa estil al botó quan deixem de pulsar-lo
+     */
     private void setButtonReleased(){
         setStyle(BUTTON_OFF_STYLE);
     }
 
+    /**
+     * Posa els listeners al botó
+     */
     private void initializeButtonListeners(){
 
 

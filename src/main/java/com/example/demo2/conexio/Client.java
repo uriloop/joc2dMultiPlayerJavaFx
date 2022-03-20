@@ -18,6 +18,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe de tipus thread que fa de client en la conexiói amb el servidor. S'encarrega de la conexió y traspas de jsons amb l'estat del joc
+ */
 public class Client extends Thread {
 
     private String hostname;
@@ -37,6 +40,11 @@ public class Client extends Thread {
     LogPartida log;
 
 
+    /** Constructor de la classe
+     * @param hostname
+     * @param port
+     * @param gameMain
+     */
     public Client(String hostname, int port, TheGameMain gameMain) {
         this.hostname = hostname;
         this.port = port;
@@ -52,6 +60,9 @@ public class Client extends Thread {
     }
 
 
+    /**
+     * És l'executador del thread  i llança una conexió TCP amb el servidor
+     */
     public void run() {
 
         String serverData;
@@ -124,6 +135,10 @@ public class Client extends Thread {
     }*/
 
 
+    /** Genera respostes a les entrades de jsons que rep del servidor adamés d'actualitzar l'estat del joc del client
+     * @param recivedDataFromServer
+     * @return
+     */
     // Tractem la rebuda de dades
     public String getRequest(String recivedDataFromServer) {
 
@@ -170,6 +185,9 @@ public class Client extends Thread {
 
     }
 
+    /** Actualitza l'estat dels enemics del joc
+     * @param jocRebut
+     */
     private void actualitzaEnemics(Joc jocRebut) {
 
 
@@ -254,6 +272,9 @@ public class Client extends Thread {
         }
     }
 
+    /** Actualitza els players del joc
+     * @param jocRebut
+     */
     private void actualitzaPlayers(Joc jocRebut) {
 
         List<Integer> nousPlayersPos = new ArrayList<>();
@@ -333,6 +354,9 @@ public class Client extends Thread {
 
     }
 
+    /** Actualitza les bales
+     * @param jocRebut
+     */
     private void actualitzaBales(Joc jocRebut) {
 
         boolean existeix = false;
@@ -357,37 +381,25 @@ public class Client extends Thread {
 
     }
 
+    /**
+     * @return retorna lñes bales noves i que per tant hem de crear en el client
+     */
     public List<Bala> getBalesAcrear() {
         return balesAcrear;
     }
 
-    public void setBalesAcrear(List<Bala> balesAcrear) {
-        this.balesAcrear = balesAcrear;
-    }
 
+    /** Getter
+     * @return retorna l'estat del joc
+     */
     public Joc getJoc() {
         return joc;
     }
 
-    public void setJoc(Joc joc) {
-        this.joc = joc;
-    }
 
-
-    public void setIdPlayer(int idPlayer) {
-        this.idPlayer = idPlayer;
-    }
-
-    public void setReady(boolean ready) {
-        this.ready = ready;
-    }
-
-    public boolean mustFinish(String dades) {
-        if (dades.equals("exit")) return false;
-        return true;
-
-    }
-
+    /** Tanca el socket de conexió
+     * @param socket
+     */
     private void close(Socket socket) {
         //si falla el tancament no podem fer gaire cosa, només enregistrar
         //el problema
@@ -408,10 +420,16 @@ public class Client extends Thread {
     }
 
 
+    /**
+     * @return  si la conexió tcp està preparada ja, retorna true
+     */
     public boolean isReady() {
         return ready;
     }
 
+    /**
+     * @return retorna la id del player del clienty
+     */
     public int getIdPlayer() {
         return idPlayer;
     }

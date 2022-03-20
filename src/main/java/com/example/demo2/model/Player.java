@@ -1,5 +1,8 @@
 package com.example.demo2.model;
 
+/**
+ * Classe model per als players
+ */
 public class Player {
 
     // Els tinc en protected en comptes de private perque en principi pretenc extendre d'aquesta classe i vull poder modificar aquestes variables
@@ -14,12 +17,21 @@ public class Player {
         return id;
     }
 
+    /**
+     * Constructor buit per al jackson
+     */
     public Player() {
 
     }
 
     protected Direccio direccio;
 
+    /** Constructor principal de la classe
+     * @param id
+     * @param posY
+     * @param posX
+     * @param direccio
+     */
     public Player(int id, float posY, float posX, Direccio direccio) {
         this.posY = posY;
         this.posX = posX;

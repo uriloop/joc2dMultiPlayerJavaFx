@@ -19,6 +19,9 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Classe que ghestiona el menu
+ */
 public class ViewManager {
 
     private final int WIDTH = 1200;
@@ -29,6 +32,9 @@ private TextField ipField;
     private Stage mainStage;
     private TheGameMain theGameMain;
 
+    /** Constructor de la classe que controla el menu
+     * @param theGameMain
+     */
     public ViewManager(TheGameMain theGameMain) {
 
         this.theGameMain=theGameMain;
@@ -50,6 +56,9 @@ private TextField ipField;
     }
 
 
+    /**
+     * Crea un label
+     */
     private void createLabelIP() {
         Label labelIP =new Label();
         labelIP.setLayoutX(WIDTH/2f-130);
@@ -64,6 +73,9 @@ private TextField ipField;
         mainPane.getChildren().add(labelIP);
     }
 
+    /**
+     * Crea el lloc on introduim la ip del servidor
+     */
     private void createIPField() {
 
         ipField= new TextField();
@@ -76,11 +88,17 @@ private TextField ipField;
 
     }
 
+    /**
+     * Crea els botons del menu
+     */
     private void createButtons(){
      createPlayButton();
 
     }
 
+    /**
+     * Crea el botó de play
+     */
     private void createPlayButton() {
         Boto playButton= new Boto("Play!");
         playButton.setLayoutY(600);
@@ -108,6 +126,10 @@ private TextField ipField;
 
     }
 
+    /** Inicia l'stage que gestiona el joc
+     * @param mainStage
+     * @param ip
+     */
     public void startNewGame(Stage mainStage,  String ip){
         theGameMain.setIp(ip);
         this.mainStage=mainStage;
@@ -119,12 +141,18 @@ private TextField ipField;
 
     }
 
+    /**
+     * Crea el fons de pantalla
+     */
     private void createBackground(){
         Image backgroundImage = new Image("background_grass.png",1200,800,false,true);
         BackgroundImage background= new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,null);
         mainPane.setBackground(new Background(background));
     }
 
+    /**
+     * Afegeix el logotip del joc a la pantalla de menu
+     */
     private void createLogo(){
         ImageView logo = new ImageView("logo_joc_javafx.png");
 logo.setLayoutX(WIDTH/2f-140);
@@ -146,10 +174,16 @@ mainPane.getChildren().add(logo);
 
     }
 
+    /**getter
+     * @return retorna la escena actual
+     */
     public Scene getMainScene() {
         return mainScene;
     }
 
+    /**
+     * @return retorna l'stage actual
+     */
     public Stage getMainStage() {
 
         return mainStage;

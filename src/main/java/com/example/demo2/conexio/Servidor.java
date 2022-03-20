@@ -10,6 +10,9 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe encarregada de crear un servidor tcp i gestionar les conexions
+ */
 public class Servidor {
 
 
@@ -23,6 +26,9 @@ public class Servidor {
     private int numplayersConectats;
     private int ids=0;
 
+    /** Constructor
+     * @param port
+     */
     public Servidor(int port) {
         this.port = port;
         playersConectats = new ArrayList<>();
@@ -34,6 +40,9 @@ public class Servidor {
         estatJoc = new Joc(players);
     }
 
+    /**
+     * mètode principal que gestiona les conexions entrants i genera les conexions amb els threads servidor
+     */
     public void listen() {
 
         try {
@@ -138,6 +147,9 @@ public class Servidor {
 
     }
 
+    /** Main que arranca el servidor
+     * @param args
+     */
     public static void main(String[] args) {
 
         Servidor srv = new Servidor(5555);

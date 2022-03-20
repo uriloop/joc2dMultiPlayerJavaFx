@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Classe que gestiona la comuiunicació amb el client
+ */
 public class ServidorThread extends Thread {
 
 // com comunico el serverThread amb el server per compartir les dades dels players???????
@@ -37,6 +40,11 @@ public class ServidorThread extends Thread {
     private List<Enemic> enemicsDeLaRonda;
     private final int numEnemicsEnArena = 3;
 
+    /** Constructor principal de la classe
+     * @param clientSocket
+     * @param estatJoc
+     * @param idPropia
+     */
     public ServidorThread(Socket clientSocket, Joc estatJoc, int idPropia) {
         this.idPropia = idPropia;
         this.estatJoc = estatJoc;
@@ -53,6 +61,9 @@ public class ServidorThread extends Thread {
 
     }
 
+    /**
+     * Executor del thread. Gestiona tota la comunicació amb el client
+     */
     @Override
     public void run() {
         log.add("i. jug_" + (idPropia) + " Conexió establerta");
@@ -104,6 +115,9 @@ public class ServidorThread extends Thread {
         }
     }
 
+    /** Actualitza l'estat dels enemics
+     * @param jocRebut
+     */
     private void actualitzarEnemics(Joc jocRebut) {
 
         // busco els enemics morts per a posarlos a mort
@@ -150,6 +164,9 @@ public class ServidorThread extends Thread {
 
     }
 
+    /**
+     * Gestiona l'spawneig controlat i escalonat de enemics
+     */
     private void spawnEnemics() {
 
         /*for (int i = estatJoc.getEnemics().size()-1; i > 0 ; i--) {
@@ -176,6 +193,10 @@ public class ServidorThread extends Thread {
     }
 
     int ronda=0;
+
+    /**
+     * gestiona les rondes del joc
+     */
     private void generaRondes() {
 
         if (tempRondes.isOn()) {
@@ -225,6 +246,10 @@ public class ServidorThread extends Thread {
     }
 
 
+    /** Retorna una ronda d'enemics
+     * @param msgEntrant
+     * @return
+     */
     // juntar tots els msgEntrants dels diferents jugadors, posar en comu i retornar el json amb les posicions
     private String generarResposta(String msgEntrant) {
 
@@ -257,6 +282,9 @@ public class ServidorThread extends Thread {
     }
 
 
+    /**
+     * @param jocRebut  Actualitza l'estat de les bales del joc
+     */
     private void actualitzaBales(Joc jocRebut) {
 
         boolean existeix = false;
@@ -288,6 +316,9 @@ public class ServidorThread extends Thread {
 
     }
 
+    /** Actualitzas l'estat del player en el joc
+     * @param jocRebut
+     */
     private void actualitzaPlayer(Joc jocRebut) {
 
         estatJoc.getPlayers().forEach(player -> {

@@ -5,6 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe model que guarda l'estat del joc en els diferents clients i el servidor
+ */
 public class Joc implements Serializable {
 
     private List<Player> players = new ArrayList<>();
@@ -20,11 +23,16 @@ public class Joc implements Serializable {
 
     // private boolean fightOn;
 
+    /**
+     * Constructor buit per al jackson
+     */
     public Joc() {
     }
 
 
-
+    /** Constructor secondari
+     * @param players
+     */
     public Joc(List<Player> players) {
         this.players = players;
     }
@@ -61,6 +69,9 @@ public class Joc implements Serializable {
         this.fight = fight;
     }
 
+    /**
+     * Suma una ronda al joc
+     */
     public void sumaRonda() {
         this.ronda++;
     }
@@ -80,19 +91,4 @@ public class Joc implements Serializable {
     public void setRonda(long ronda) {
         this.ronda = ronda;
     }
-/*
-        Amb el fightOn sabem si estem al temps de descans o enmig d'una oleada:
-        El servidor inicia el temps de descans quan li arriba que ja no queden enemics.
-        Quan el temps finalitza el servidor posa el fightOn a true i envia una nova ronda d'enemics
-        Quan el fightOn és true el client mostra missatge de fight! i numero d'enemics restants
-        Quan el fightOn és false el client mostra missatge de waiting next round
-        Quan el client rep enemics els afegeix al joc.
-
-    public boolean isFightOn() {
-        return fightOn;
-    }
-
-    public void setFightOn(boolean fightOn) {
-        this.fightOn = fightOn;
-    }*/
 }

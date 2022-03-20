@@ -1,5 +1,8 @@
 package com.example.demo2.model;
 
+/**
+ * Classe model per a les bales
+ */
 public class Bala {
 
     private float posX, posY;
@@ -7,9 +10,18 @@ public class Bala {
     private long idBala;
     private boolean dead=false;
 
+    /**
+     * Constructor buit per al jackson
+     */
     public Bala() {
     }
 
+    /** Constructor del client
+     * @param idBales
+     * @param posX
+     * @param posY
+     * @param direccio
+     */
     public Bala(long idBales, float posX, float posY, Player.Direccio direccio) {
         idBala=idBales;
         this.posX = posX;
@@ -17,11 +29,6 @@ public class Bala {
         this.dir = direccio;
     }
 
-    public Bala(float posX, float posY, Player.Direccio dir) {
-        this.posX = posX;
-        this.posY = posY;
-        this.dir = dir;
-    }
 
     public long getIdBala() {
         return idBala;

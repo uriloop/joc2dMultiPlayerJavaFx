@@ -8,6 +8,10 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe que gestiona la vista del joc
+ * Ens permet saltar d'un stage a un altre
+ */
 public class GameViewManager {
 
     private final int GAME_WIDTH = 1200;
@@ -23,18 +27,27 @@ public class GameViewManager {
     private String ip;
     private double cicles = 0;
 
+    /**
+     * Constructor de la classe
+     */
     public GameViewManager() {
 
         initializeGame();
         createListeners();
     }
 
+    /**
+     * Crea els listeners dels inputs del joc
+     */
     private void createListeners() {
         gameScene.setOnKeyPressed(e -> {
             input.add(e.getCode().toString());
         });
     }
 
+    /**
+     * Inicia l'stage del joc
+     */
     private void initializeGame() {
 
         gamePane= new AnchorPane();

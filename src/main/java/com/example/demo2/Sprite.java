@@ -10,6 +10,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+/**
+ * Engloba tots els objectes que apareixen en el joc i carrega la imatge corresponent a cada tipus
+ */
 public class Sprite extends Rectangle {
 
 
@@ -22,6 +25,16 @@ public class Sprite extends Rectangle {
     private String imatgeActual;
     private int vida = 6;
 
+    /**  Aquest constructor s'utilitza amb les bales
+     * @param id
+     * @param type
+     * @param color
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param direccio
+     */
     // constructor basicament per les bales
     public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
         super(w, h, color);
@@ -32,6 +45,16 @@ public class Sprite extends Rectangle {
         setTranslateY(y);
     }
 
+    /** Constructor específic per al player
+     * @param type
+     * @param color
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param direccio
+     * @param velocitat
+     */
     // Constructor per especificar la velocitat de moviment  -per al player-
     public Sprite(String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
@@ -43,6 +66,18 @@ public class Sprite extends Rectangle {
         this.id = -1;
     }
 
+    /**
+     * Constructor per als enemics
+     * @param id
+     * @param type
+     * @param color
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param direccio
+     * @param velocitat
+     */
     // Aquest per als enemics que necessito la seva id de sprite per identificar-los
     public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio, int velocitat) {
         super(w, h, color);
@@ -54,15 +89,9 @@ public class Sprite extends Rectangle {
         setTranslateY(y);
     }
 
-    /*
-        public Sprite(String type, Color color, int x, int y, int w, int h) {
-            super(w,h,color);
-            // per carregar els missatges
-            this.type=type;
-            setTranslateX(x);
-            setTranslateY(y);
-
-        }*/
+    /**Serveix per mostrar la vida dels players
+     * @return un array d'sprites, un per cada vida que li queda
+     */
     public Sprite[] showVida() {
         Sprite[] vides = new Sprite[vida];
         for (int i = 0; i < vida; i++) {
@@ -77,6 +106,9 @@ public class Sprite extends Rectangle {
     }
 
 
+    /** Posa imatge a l'sprite de tipus player
+     * @param direccio la direcció en que mira l'sprite
+     */
     public void setImatgeActual(Player.Direccio direccio) {
         Image img = null;
         switch (direccio.toString()) {
@@ -114,54 +146,79 @@ public class Sprite extends Rectangle {
         this.setFill(new ImagePattern(img));
     }
 
+    /** Per donar per mort un enemic. Dibuixa un basalt de sang un cop mor
+     * @param dead
+     * @return retorna un Sprite amb la imatge de sang que deixen els enemics al morir
+     */
     public Node setDead(boolean dead) {
         this.dead = dead;
         return new Sprite("sang",Color.RED, (int) getTranslateX(), (int) getTranslateY(), (int) getWidth(), (int) getHeight(), Player.Direccio.S,0).setImatgeSang();
     }
 
+    /**getter del boolean dead
+     * @return true si està mort o false si esta viu
+     */
     public boolean isDead() {
         return dead;
     }
 
 
+    /**
+     * Mou el personatge
+     */
     public void moveRight() {
         setTranslateX(getTranslateX() + velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveLeft() {
         setTranslateX(getTranslateX() - velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveUp() {
         setTranslateY(getTranslateY() - velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveDown() {
         setTranslateY(getTranslateY() + velMoviment);
     }
 
-
+    /**
+     * Mou el personatge
+     */
     public void moveLeftUp() {
         setTranslateY(getTranslateY() - velMoviment);
         setTranslateX(getTranslateX() - velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveLeftDown() {
         setTranslateY(getTranslateY() + velMoviment);
         setTranslateX(getTranslateX() - velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveRightUp() {
         setTranslateY(getTranslateY() - velMoviment);
         setTranslateX(getTranslateX() + velMoviment);
     }
-
+    /**
+     * Mou el personatge
+     */
     public void moveRightDown() {
         setTranslateY(getTranslateY() + velMoviment);
         setTranslateX(getTranslateX() + velMoviment);
     }
 
-
+    /**genera un sprite de bala
+     */
     public Sprite atacar(Sprite sprite, long id) {
 
 
@@ -194,44 +251,51 @@ public class Sprite extends Rectangle {
         return s;
     }
 
+    /**
+     * @return retorna la direcció actual del sprite
+     */
     public Player.Direccio getDireccio() {
         return direccio;
     }
 
+    /** Perr cambiar la direcció en que mira l'sprite
+     * @param direccio
+     */
     public void setDireccio(Player.Direccio direccio) {
         this.direccio = direccio;
     }
 
+    /**
+     * @return retorna el tipus de sprite
+     */
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
+    /**
+     * @return retorna la id de l'sprite
+     */
     public long getIdSprite() {
         return id;
     }
 
-    public void setIdSprite(long id) {
-        this.id = id;
-    }
 
-    public int getVida() {
-        return vida;
-    }
-
-    public void setVida(int vida) {
-        this.vida = vida;
-    }
-
+    /**
+     * @return posa la imatge de sang a l'sprite
+     */
     public Node setImatgeSang(){
         Image img= new Image(String.valueOf(this.getClass().getClassLoader().getResource("sang_image.png")));
         this.setFill(new ImagePattern(img));
         return this;
     }
 
+    /**
+     * Posa la imatge pertinent als enemics tenint en compte la fase de moviment en que es troba i el tipus d'enemic que és
+     *
+     * @param imatge
+     * @param tipus
+     */
     public void setImatgeActual(int imatge, Enemic.Tipus tipus) {
         Image img = null;
         if (imatge == 0) {
@@ -256,6 +320,10 @@ public class Sprite extends Rectangle {
 
     }
 
+    /**
+     * Dibuixa la paraula fight o waiting depenent de l'estat de les olejades
+     * @param estatOlejades
+     */
     public void setImatgeActualFight(String estatOlejades) {
         Image img = null;
         if (estatOlejades.equals("wait")) {
@@ -270,6 +338,9 @@ public class Sprite extends Rectangle {
 
     }
 
+    /**Posa imatge a l'sprite castell
+     * @param vidaCastell
+     */
     public void setImatgeCastell(int vidaCastell) {
 
         Image img = null;
@@ -308,6 +379,9 @@ public class Sprite extends Rectangle {
 
     }
 
+    /**
+     * Resta vida a l'sprite
+     */
     public void restaVida() {
         if (vida > 1) vida--;
         else {

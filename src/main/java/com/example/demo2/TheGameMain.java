@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * Classe principal d3el joc que exten de application
+ */
 public class TheGameMain extends Application {
 
     private double cicles = 0;
@@ -96,12 +99,18 @@ public class TheGameMain extends Application {
     private AudioClip acHit;
     private AudioClip acDead;
 
+    /**
+     * Posa fons a la pantalla de joc (la gespa)
+     */
     private void createBackground() {
         Image backgroundImage = new Image("background_grass.png", 1200, 800, false, true);
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         root.setBackground(new Background(background));
     }
 
+    /**
+     * @return retorna un pane amb els continguts rincipals de l'escena
+     */
     public Parent createContent() {
         root.setPrefSize(viewPortX, viewPortY);
         createBackground();
@@ -127,6 +136,9 @@ public class TheGameMain extends Application {
     double ciclesMov = cicles;
 
 
+    /**
+     * És el mètode que s'executa en bucle i crea el gameloop
+     */
     private void update() {
 
 
@@ -289,6 +301,9 @@ public class TheGameMain extends Application {
         root.getChildren().add(sp);
     }
 
+    /**
+     * Actualitza l'estat del player al servidor
+     */
     private void actualitzaPlayer() {
 
         /*sprites().stream().filter(s-> s.getType().equals("vida")).forEach(s-> {
@@ -308,6 +323,9 @@ public class TheGameMain extends Application {
 
     }
 
+    /**
+     * Controla els inputs i genera un moviment o dispar depenent d'aquests
+     */
     private void inputs() {
         input.forEach(s -> {
 
@@ -407,6 +425,9 @@ public class TheGameMain extends Application {
         input = new ArrayList<>();
     }
 
+    /**
+     * Actualitza l'estat del joc consultant la info que arriba del servidor
+     */
     private void updateEstatJoc() {
 
         // mirar el joc i per cada player del servidor, és a dir tots menys el meu player
@@ -556,10 +577,16 @@ public class TheGameMain extends Application {
         }
     }
 
+    /**
+     * No implementat
+     */
     private void updateRonda() {
         rondaSprite.setLabel(client.getJoc().getRonda());
     }
 
+    /**
+     * Actualitza l'estat del castell
+     */
     private void updateCastell() {
 
 
@@ -575,6 +602,9 @@ public class TheGameMain extends Application {
     }
 
 
+    /**
+     * @return La llista de tots els sprites de qualsevol tipus que tinguem al joc
+     */
     private List<Sprite> sprites() {
         return root.getChildren().stream().map(n -> (Sprite) n).collect(Collectors.toList());
     }
@@ -593,6 +623,10 @@ public class TheGameMain extends Application {
         return player1;
     }
 
+    /** Prepara els stage i el canvas per al joc i llança el controlador del menu
+     * @param stage
+     * @throws Exception
+     */
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -612,6 +646,9 @@ public class TheGameMain extends Application {
 
     MediaPlayer mediaPlayer;
 
+    /**
+     * Afegeix musica al joc
+     */
     private void music() {
         String path = getClass().getResource("/background_music.mp3").toString();
         Media media = new Media(path);
@@ -620,6 +657,9 @@ public class TheGameMain extends Application {
 
     }
 
+    /** Executa el joc.
+     * @param args
+     */
     public static void main(String[] args) {
 
 

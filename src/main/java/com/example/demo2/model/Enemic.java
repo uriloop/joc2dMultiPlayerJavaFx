@@ -1,5 +1,8 @@
 package com.example.demo2.model;
 
+/**
+ * Model per als enemics del joc
+ */
 public class Enemic {
 
     float posY, posX;
@@ -9,6 +12,12 @@ public class Enemic {
     private long id;
     private Tipus tipus;
 
+    /** Constructor de la classe
+     * @param id
+     * @param posY
+     * @param posX
+     * @param tipus
+     */
     // constructor del client
     public Enemic(long id, float posY, float posX, Tipus tipus) {
         this.id = id;
@@ -42,9 +51,16 @@ public class Enemic {
 
     }
 
+    /**
+     * Enum del tipus d'enemic que és
+     */
     public enum Tipus {
         PUMPKIN, FLOATING, GHOST, BOSS;
 
+        /**
+         * @param num
+         * @return retorna donat un numero
+         */
         public Tipus getTipus(int num){
             switch (num){
                 case 0 -> {
@@ -65,9 +81,16 @@ public class Enemic {
         }
     }
 
+    /**
+     * Constructor buit per al jackson
+     */
     public Enemic() {
     }
 
+    /** Constructor secundari
+     * @param tipus
+     * @param id
+     */
     public Enemic(Tipus tipus, long id) {
         this.tipus = tipus;
         this.id = id;
@@ -156,24 +179,8 @@ public class Enemic {
         return id;
     }
 
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Tipus getTipus() {
         return tipus;
     }
 
-    public void setTipus(Tipus tipus) {
-        this.tipus = tipus;
-    }
 }
