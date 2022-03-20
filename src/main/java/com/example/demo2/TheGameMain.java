@@ -48,7 +48,7 @@ public class TheGameMain extends Application {
     private Pane root = new Pane();
     private int margeJugadors = 25;
     private final Sprite player1 = new Sprite("player", Color.DARKOLIVEGREEN, (int) (viewPortX / 2), (int) (viewPortY - 50), 80, 150, Player.Direccio.S, 25);
-    private final Sprite castell = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2)-125, (int) (viewPortY - 150), 250, 180, Player.Direccio.S, 25);
+    private final Sprite castell = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2) - 125, (int) (viewPortY - 150), 250, 180, Player.Direccio.S, 25);
     private List<Sprite> players = new ArrayList<>();
     private List<Sprite> enemics = new ArrayList<>();
     private List<String> input = new ArrayList<>();
@@ -58,7 +58,7 @@ public class TheGameMain extends Application {
     private double ciclesSpritesEnemics;
     private int vidaCastell;
     private String rondaLabelID;
-    private Sprite rondaSprite = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2)-125, 150, 250, 180, Player.Direccio.S, 25);
+    private Sprite rondaSprite = new Sprite("castell", Color.BLUE, (int) (viewPortX / 2) - 125, 150, 250, 180, Player.Direccio.S, 25);
 
 
     public List<String> getInput() {
@@ -92,6 +92,7 @@ public class TheGameMain extends Application {
     public Pane getRoot() {
         return root;
     }
+
     private AudioClip acHit;
     private AudioClip acDead;
 
@@ -105,12 +106,12 @@ public class TheGameMain extends Application {
         root.setPrefSize(viewPortX, viewPortY);
         createBackground();
         String path = getClass().getResource("/small_hit_sound.wav").toString();
-        acHit=new AudioClip(path);
-         path = getClass().getResource("/enemy_dead_sound.wav").toString();
-        acDead=new AudioClip(path);
+        acHit = new AudioClip(path);
+        path = getClass().getResource("/enemy_dead_sound.wav").toString();
+        acDead = new AudioClip(path);
         root.getChildren().add(player1);
         root.getChildren().add(castell);
-    music();
+        music();
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
@@ -174,20 +175,15 @@ public class TheGameMain extends Application {
 
         // després els posem a morts els que tinguin una colisió
         sprites().stream()
-                .filter(sprite -> sprite.getType().equals("atac"))
-                .forEach(atac -> {
+                .filter(sprite -> sprite.getType().equals("enemic"))
+                .forEach(enemic -> {
                     for (Sprite players :
                             sprites()) {
-                        if (players.getType().equals("players")) {
-                            if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
-                                if (atac.getIdSprite() % 10 != players.getIdSprite())
-                                    players.setDead(true);
-                            }
-                        } else if (players.getType().equals("player")) {
-                            if (atac.getBoundsInParent().intersects(players.getBoundsInParent())) {
-                                if (atac.getIdSprite() % 10 != id) {
-                                    players.setDead(true);
-                                    atac.setDead(true);
+                        if (players.getType().equals("player")) {
+                            if (enemic.getBoundsInParent().intersects(players.getBoundsInParent())) {
+                                if (enemic.getIdSprite() % 10 != id) {
+                                    players.restaVida();
+                                    enemic.setDead(true);
                                 }
 
                             }
@@ -202,15 +198,16 @@ public class TheGameMain extends Application {
                             sprites()) {
                         if (sprite.getType().equals("enemic")) {
                             if (atac.getBoundsInParent().intersects(sprite.getBoundsInParent())) {
-                                if (atac.getIdSprite() % 10 == player1.getIdSprite()) {
+                               /* if (atac.getIdSprite() % 10 == player1.getIdSprite()) {
                                     client.getJoc().getPlayers().forEach(p -> {
                                         if (p.getId() == this.id) {
                                             p.sumaKill();
-
+                                                                                                Arreglar. no he d'actuar sobre el client
                                         }
                                     });
-                                }
-                                sprite.setDead(true);
+                                }*/
+
+                                root.getChildren().add(sprite.setDead(true));
                                 atac.setDead(true);
                                 acDead.play();
 
@@ -230,6 +227,19 @@ public class TheGameMain extends Application {
                         if (e.getId() == s.getIdSprite()) {
                             if (s.isDead()) {
                                 e.setViu(false);
+                            }
+                        }
+                    }
+
+                });
+        sprites().stream().filter(s -> s.getType().equals("atac"))
+                .forEach(s -> {
+
+                    for (Bala bala :
+                            client.getJoc().getBales()) {
+                        if (bala.getIdBala() == s.getIdSprite()) {
+                            if (bala.isDead()) {
+                                s.setDead(true);
                             }
                         }
                     }
@@ -281,12 +291,18 @@ public class TheGameMain extends Application {
 
     private void actualitzaPlayer() {
 
+        /*sprites().stream().filter(s-> s.getType().equals("vida")).forEach(s-> {
+            root.getChildren().remove(s);
+        });*/
+
+
         client.getJoc().getPlayers().forEach(p -> {
             if (p.getId() == id) {
                 p.setDireccio(player1.getDireccio());
                 p.setPosX((int) player1.getTranslateX());
                 p.setPosY((int) player1.getTranslateY());
                 p.setMort(player1.isDead());
+
             }
         });
 
@@ -436,20 +452,23 @@ public class TheGameMain extends Application {
             // actualitzem les bales que arriben del servidor
             int atacW = 16;
             int atacH = 8;
-            client.getBalesAcrear().forEach(bala -> {
-                Sprite sp = new Sprite(bala.getIdBala(), "atac", Color.RED, (int) (bala.getPosX()),
-                        (int) (bala.getPosY()),
-                        bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacH : atacW, bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacW : atacH, bala.getDir());
-                root.getChildren().add(sp);
+            client.getBalesAcrear().stream().filter(b -> {
+                        return !b.isDead();
+                    })
+                    .forEach(bala -> {
+                        Sprite sp = new Sprite(bala.getIdBala(), "atac", Color.RED, (int) (bala.getPosX()),
+                                (int) (bala.getPosY()),
+                                bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacH : atacW, bala.getDir() == Player.Direccio.S || bala.getDir() == Player.Direccio.N ? atacW : atacH, bala.getDir());
+                        root.getChildren().add(sp);
 
-            });
+                    });
 
-            if (this.vidaCastell>client.getJoc().getVidaCastell()) {
+            if (this.vidaCastell > client.getJoc().getVidaCastell()) {
                 client.getJoc().setVidaCastell(this.vidaCastell);
                 updateCastell();
 
-            }else if (this.vidaCastell<client.getJoc().getVidaCastell()){
-                this.vidaCastell=client.getJoc().getVidaCastell();
+            } else if (this.vidaCastell < client.getJoc().getVidaCastell()) {
+                this.vidaCastell = client.getJoc().getVidaCastell();
                 updateCastell();
 
             }
@@ -470,6 +489,7 @@ public class TheGameMain extends Application {
                 }
             }
 
+
             updateFight();
 
             updateRonda();
@@ -485,17 +505,15 @@ public class TheGameMain extends Application {
             // mostrem els enemics
             enemics = new ArrayList<>();
 
-            client.getJoc().getEnemics().stream()
-                    .filter(en -> en.isViu())           // filtrem que no estigui mort i el tornem a crear com sprite
+            client.getJoc().getEnemics()          // filtrem que no estigui mort i el tornem a crear com sprite
                     .forEach(e -> {
-                        try {  // Aquest try no fa res ja
+                        if (e.isViu()){
+
                             Sprite sp = new Sprite(e.getId(), "enemic", Color.RED, (int) e.getPosX(), (int) e.getPosY(), 64, 64, Player.Direccio.S, 2);
                             enemics.add(sp);
                             sp.setImatgeActual(numSpriteImage, e.getTipus());
-
-                        } catch (Exception exc) {
-                            // segons sembla estic modificant un valor d'una llista sobre la que estic reiterant i no està permés pero crec que no ho estic fent."); // No afecta a res sembla ser...  A les males em guardo les poosicions en una llista i despres reitero sobre la llista per fer els cambis
                         }
+
                     });
 
             enemics.forEach(e -> root.getChildren().add(e));
@@ -523,6 +541,16 @@ public class TheGameMain extends Application {
                     }
                 }
             });
+
+            sprites().stream().filter(s -> s.getType().equals("vida")).forEach(s -> {
+                root.getChildren().remove(s);
+            });
+
+            Sprite[] vides = player1.showVida();
+
+            for (int i = 0; i < vides.length; i++) {
+                root.getChildren().add(vides[i]);
+            }
 
 
         }

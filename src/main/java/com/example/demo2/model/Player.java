@@ -8,6 +8,7 @@ public class Player {
     protected int id;
     protected boolean mort=false;
     private int kills= 0;
+    private int vida=1000;
 
     public int getId() {
         return id;
@@ -31,7 +32,10 @@ public class Player {
     }
 
     public void setMort(boolean mort) {
-        this.mort = mort;
+
+            this.mort = mort;
+
+
     }
 
     public void setId(int id) {
@@ -75,5 +79,15 @@ public class Player {
         return direccio;
     }
 
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
 
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
 }

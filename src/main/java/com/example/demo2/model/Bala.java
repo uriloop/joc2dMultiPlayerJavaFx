@@ -5,7 +5,7 @@ public class Bala {
     private float posX, posY;
     private Player.Direccio dir;
     private long idBala;
-
+    private boolean dead=false;
 
     public Bala() {
     }
@@ -49,6 +49,14 @@ public class Bala {
 
     public Player.Direccio getDir() {
         return dir;
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     public void setDir(Player.Direccio dir) {

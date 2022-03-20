@@ -2,6 +2,7 @@ package com.example.demo2;
 
 import com.example.demo2.model.Enemic;
 import com.example.demo2.model.Player;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -19,6 +20,7 @@ public class Sprite extends Rectangle {
     private Player.Direccio direccio = Player.Direccio.S;
     private long id;
     private String imatgeActual;
+    private int vida = 6;
 
     // constructor basicament per les bales
     public Sprite(long id, String type, Color color, int x, int y, int w, int h, Player.Direccio direccio) {
@@ -52,15 +54,23 @@ public class Sprite extends Rectangle {
         setTranslateY(y);
     }
 
-/*
-    public Sprite(String type, Color color, int x, int y, int w, int h) {
-        super(w,h,color);
-        // per carregar els missatges
-        this.type=type;
-        setTranslateX(x);
-        setTranslateY(y);
+    /*
+        public Sprite(String type, Color color, int x, int y, int w, int h) {
+            super(w,h,color);
+            // per carregar els missatges
+            this.type=type;
+            setTranslateX(x);
+            setTranslateY(y);
 
-    }*/
+        }*/
+    public Sprite[] showVida() {
+        Sprite[] vides = new Sprite[vida];
+        for (int i = 0; i < vida; i++) {
+            Sprite sprite = new Sprite("vida", Color.RED, (int) getTranslateX() + (i * 6), (int) getTranslateY(), 5, 10, Player.Direccio.S, 0);
+            vides[i] = sprite;
+        }
+        return vides;
+    }
 
     public String getImatgeActual() {
         return imatgeActual;
@@ -70,49 +80,48 @@ public class Sprite extends Rectangle {
     public void setImatgeActual(Player.Direccio direccio) {
         Image img = null;
         switch (direccio.toString()) {
-            case  "N"-> {
-                if (this.type.equals("players")){
+            case "N" -> {
+                if (this.type.equals("players")) {
                     img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_n_quiet.png")));
 
-                }else
-                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_n_quiet.png")));
+                } else
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_n_quiet.png")));
             }
             case "S" -> {
-                if (this.type.equals("players")){
+                if (this.type.equals("players")) {
                     img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_s_quiet.png")));
 
-                }else
-                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_s_quiet.png")));
+                } else
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_s_quiet.png")));
             }
             case "E" -> {
-                if (this.type.equals("players")){
+                if (this.type.equals("players")) {
                     img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_e_quiet.png")));
 
-                }else
-                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_e_quiet.png")));
+                } else
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_e_quiet.png")));
 
             }
             case "W" -> {
-                if (this.type.equals("players")){
+                if (this.type.equals("players")) {
                     img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("players_w_quiet.png")));
 
-                }else
-                img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_w_quiet.png")));
+                } else
+                    img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("player_w_quiet.png")));
 
             }
         }
         this.setFill(new ImagePattern(img));
     }
 
-    public void setDead(boolean dead) {
+    public Node setDead(boolean dead) {
         this.dead = dead;
+        return new Sprite("sang",Color.RED, (int) getTranslateX(), (int) getTranslateY(), (int) getWidth(), (int) getHeight(), Player.Direccio.S,0).setImatgeSang();
     }
 
     public boolean isDead() {
         return dead;
     }
-
-
 
 
     public void moveRight() {
@@ -209,20 +218,32 @@ public class Sprite extends Rectangle {
         this.id = id;
     }
 
+    public int getVida() {
+        return vida;
+    }
 
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public Node setImatgeSang(){
+        Image img= new Image(String.valueOf(this.getClass().getClassLoader().getResource("sang_image.png")));
+        this.setFill(new ImagePattern(img));
+        return this;
+    }
 
     public void setImatgeActual(int imatge, Enemic.Tipus tipus) {
         Image img = null;
-        if (imatge==0){
-            switch (tipus){
+        if (imatge == 0) {
+            switch (tipus) {
                 case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_1.png")));
                 case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
                 case GHOST -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_ghost_1.png")));
                 case BOSS -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_boss_1.png")));
                 default -> throw new IllegalStateException("Unexpected value: " + tipus);
             }
-        }else if (imatge==1){
-            switch (tipus){
+        } else if (imatge == 1) {
+            switch (tipus) {
                 case PUMPKIN -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_pumpkin_2.png")));
                 case FLOATING -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_floating_red_1.png")));
                 case GHOST -> img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("enemy_ghost_2.png")));
@@ -237,10 +258,10 @@ public class Sprite extends Rectangle {
 
     public void setImatgeActualFight(String estatOlejades) {
         Image img = null;
-        if (estatOlejades.equals("wait")){
-         img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("waiting_2.png")));
+        if (estatOlejades.equals("wait")) {
+            img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("waiting_2.png")));
 
-        }else {
+        } else {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("fight_1.png")));
 
         }
@@ -253,19 +274,19 @@ public class Sprite extends Rectangle {
 
         Image img = null;
 
-        if (vidaCastell>80){
+        if (vidaCastell > 80) {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
 
-        }else if (vidaCastell>60){
+        } else if (vidaCastell > 60) {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
 
-        }else if (vidaCastell>40){
+        } else if (vidaCastell > 40) {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
 
-        }else if (vidaCastell>20){
+        } else if (vidaCastell > 20) {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
 
-        }else{
+        } else {
             img = new Image(String.valueOf(this.getClass().getClassLoader().getResource("puig_castell.png")));
 
 
@@ -281,9 +302,17 @@ public class Sprite extends Rectangle {
         label.setLayoutX(getTranslateX());
         label.setPrefWidth(getWidth());
         label.setPrefHeight(getHeight());
-        label.setFont(Font.font("Verdana",35));
+        label.setFont(Font.font("Verdana", 35));
         label.setVisible(true);
 
 
+    }
+
+    public void restaVida() {
+        if (vida > 1) vida--;
+        else {
+            vida--;
+            setDead(true);
+        }
     }
 }
