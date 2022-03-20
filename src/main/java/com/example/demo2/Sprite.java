@@ -66,7 +66,7 @@ public class Sprite extends Rectangle {
     public Sprite[] showVida() {
         Sprite[] vides = new Sprite[vida];
         for (int i = 0; i < vida; i++) {
-            Sprite sprite = new Sprite("vida", Color.RED, (int) getTranslateX() + (i * 6), (int) getTranslateY(), 5, 10, Player.Direccio.S, 0);
+            Sprite sprite = new Sprite("vida", Color.RED, (int) getTranslateX() + (i * 6), (int) getTranslateY()-20, 5, 10, Player.Direccio.S, 0);
             vides[i] = sprite;
         }
         return vides;
